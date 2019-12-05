@@ -1,8 +1,12 @@
 package de.othr.se.grj46992.bikerator.entity;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -10,82 +14,36 @@ import java.util.List;
 public class Customer implements Serializable {
     @Id
     @NotNull
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long custId;
+    private String username;
     private String firstname;
     private String lastname;
-    private String username;
-    private int password;
-    @ManyToOne
+    private String email;
+    private String password;
+    @OneToOne
     private Address address;
     @OneToOne
-    private ShoppingCart shoppingCart;
+    private Order currentOrder;
     @ElementCollection
-    private List<Configuration> configurationList;
+    @OneToMany(mappedBy = "customer")
+    private List<Order> completedOrderList;
+    @ElementCollection
+    @OneToMany
+    private List<Configuration> configList;
 
-    //Getter and Setter
-
-    public Long getCustId() {
-        return custId;
-    }
-
-    public void setCustId(Long custId) {
-        this.custId = custId;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getUsername() {
-        return username;
-    }
 
     public void setUsername(String username) {
         this.username = username;
     }
 
-    public int getPassword() {
-        return password;
-    }
-
-    public void setPassword(int password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
-    public Address getAddress() {
-        return address;
+    public String getPassword() {
+        return password;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public ShoppingCart getShoppingCart() {
-        return shoppingCart;
-    }
-
-    public void setShoppingCart(ShoppingCart shoppingCart) {
-        this.shoppingCart = shoppingCart;
-    }
-
-    public List<Configuration> getConfigurationList() {
-        return configurationList;
-    }
-
-    public void setConfigurationList(List<Configuration> configurationList) {
-        this.configurationList = configurationList;
+    public String getUsername() {
+        return username;
     }
 }

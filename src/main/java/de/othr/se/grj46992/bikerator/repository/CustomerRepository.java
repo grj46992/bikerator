@@ -5,6 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomerRepository extends CrudRepository<Customer, Long> {
-    Customer findByUsernameAndPassword(String username, int password);
+public interface CustomerRepository extends CrudRepository<Customer, String> {
+    Customer findByUsername(String username);
 }

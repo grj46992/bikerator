@@ -11,35 +11,16 @@ public class Category implements Serializable {
     @Id
     @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long catId;
+    private Long categoryId;
     private String name;
+    private String description;
+    private String  imagePath;
     @ElementCollection
     @OneToMany(mappedBy = "category")
     private List<Item> itemList;
-
-    //Getter and Setter
-
-    public Long getCatId() {
-        return catId;
-    }
-
-    public void setCatId(Long catId) {
-        this.catId = catId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Item> getItemList() {
-        return itemList;
-    }
-
-    public void setItemList(List<Item> itemList) {
-        this.itemList = itemList;
-    }
+    @ManyToOne
+    private Category fatherCategory;
+    @ElementCollection
+    @OneToMany(mappedBy = "fatherCategory")
+    private List<Category> childCategories;
 }

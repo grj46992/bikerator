@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OrderService implements OrderServiceIF {
+public class OrderManagementService implements OrderManagementServiceIF {
 
     @Autowired
     private OrderRepository orderRepository;

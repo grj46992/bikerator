@@ -9,5 +9,4 @@ public class BikeratorApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BikeratorApplication.class, args);
 	}
-
 }

@@ -4,42 +4,25 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Order implements Serializable {
     @Id
     @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long ordId;
+    private Long orderId;
+    private Double amountOrder;
     private Date orderDate;
+    private Boolean completed;
     @ManyToOne
-    private ShoppingCart shoppingCart;
+    private Address shippingAddress;
+    @ManyToOne
+    private Address billingAddress;
+    @OneToOne
+    private Customer customer;
+    @ElementCollection
+    @OneToMany
+    private List<Configuration> configList;
 
-    //private Versandart versandart;
-    //private Zahlungsart zahlungsart;
-
-    //Getter and Setter
-    public Long getOrdId() {
-        return ordId;
-    }
-
-    public void setOrdId(Long ordId) {
-        this.ordId = ordId;
-    }
-
-    public Date getOrderDate() {
-        return orderDate;
-    }
-
-    public void setOrderDate(Date orderDate) {
-        this.orderDate = orderDate;
-    }
-
-    public ShoppingCart getShoppingCart() {
-        return shoppingCart;
-    }
-
-    public void setShoppingCart(ShoppingCart shoppingCart) {
-        this.shoppingCart = shoppingCart;
-    }
 }
