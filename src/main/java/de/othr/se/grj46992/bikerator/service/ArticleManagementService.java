@@ -1,13 +1,7 @@
 package de.othr.se.grj46992.bikerator.service;
 
-import de.othr.se.grj46992.bikerator.entity.Category;
-import de.othr.se.grj46992.bikerator.entity.Configuration;
-import de.othr.se.grj46992.bikerator.entity.Item;
-import de.othr.se.grj46992.bikerator.entity.ItemPool;
-import de.othr.se.grj46992.bikerator.repository.CategoryRepository;
-import de.othr.se.grj46992.bikerator.repository.ConfigurationRepository;
-import de.othr.se.grj46992.bikerator.repository.ItemPoolRepository;
-import de.othr.se.grj46992.bikerator.repository.ItemRepository;
+import de.othr.se.grj46992.bikerator.entity.*;
+import de.othr.se.grj46992.bikerator.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,27 +20,39 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     @Autowired
     private ItemRepository itemRepository;
 
+    @Autowired
+    private DepotItemRepository depotItemRepository;
+
+
     @Override
-    public Item createItem(Item item) {
-        Item newItem = itemRepository.save(item);
-        return newItem;
+    public Iterable<Category> findAllCategories() {
+        Iterable<Category> allCategories = categoryRepository.findAll();
+        return allCategories;
     }
 
     @Override
-    public Category createCategory(Category category) {
-        Category newCategory = categoryRepository.save(category);
-        return newCategory;
+    public Iterable<Item> findAllItems() {
+        Iterable<Item> allItems = itemRepository.findAll();
+        return allItems;
     }
 
     @Override
-    public Configuration createConfiguration(Configuration configuration) {
-        Configuration newConfiguration = configurationRepository.save(configuration);
-        return newConfiguration;
+    public void createCategory(Category category) {
+        categoryRepository.save(category);
     }
 
     @Override
-    public ItemPool createItemPool(ItemPool itemPool) {
-        ItemPool newItemPool = itemPoolRepository.save(itemPool);
-        return newItemPool;
+    public void createItem(Item item) {
+        itemRepository.save(item);
+    }
+
+    @Override
+    public void createItemPool(ItemPool itemPool) {
+        itemPoolRepository.save(itemPool);
+    }
+
+    @Override
+    public void createDepotItem(DepotItem depotItem) {
+        depotItemRepository.save(depotItem);
     }
 }

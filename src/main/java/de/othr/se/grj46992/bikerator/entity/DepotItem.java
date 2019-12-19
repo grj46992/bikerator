@@ -13,4 +13,12 @@ public class DepotItem implements Serializable {
     private Long depotItemId;
     @ManyToOne
     private Item item;
+
+    public DepotItem(){
+
+    }
+
+    public DepotItem(Item item) {
+        this.item = item;
+    }
 }

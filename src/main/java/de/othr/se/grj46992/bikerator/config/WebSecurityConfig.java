@@ -29,23 +29,33 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return securityUtilities.passwordEncoder();
     }
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .userDetailsService(userSecurityService).passwordEncoder(passwordEncoder());
-    }
-
     private static final String[] ALLOW_ACCESS_WITHOUT_AUTHENTICATION = {
-            "/css/**", "/image/**", "/fonts/**", "/", "/signup" };
+            "/css/**", "/image/**", "/fonts/**", "/",  "/login", "/signup", "/forgotPassword", "/register", "/artikel", "/kategorien"};
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http
                 .authorizeRequests()
-                .antMatchers("/account").hasAnyRole("USER")
-                .antMatchers(ALLOW_ACCESS_WITHOUT_AUTHENTICATION).permitAll()
-                .and().formLogin();
+                .antMatchers(ALLOW_ACCESS_WITHOUT_AUTHENTICATION)
+                .permitAll().anyRequest().authenticated();
+        http
+                .formLogin()
+                    .loginPage("/login").permitAll()
+                    .defaultSuccessUrl("/account")
+                    .failureUrl("/login?error")
+                .and()
+                    .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                    .logoutSuccessUrl("/?logout")
+                    .deleteCookies("remeber-me")
+                    .permitAll()
+                .and()
+                    .rememberMe();
     }
 
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .userDetailsService(userSecurityService).passwordEncoder(passwordEncoder());
+    }
 }
