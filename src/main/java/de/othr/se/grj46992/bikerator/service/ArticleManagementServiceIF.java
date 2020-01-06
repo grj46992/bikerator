@@ -9,5 +9,12 @@ public interface ArticleManagementServiceIF {
     public void createItemPool(ItemPool itemPool);
     public void createDepotItem(DepotItem depotItem);
     public Iterable<Category> findAllCategories();
+    public Iterable<Item> findItemsByCategory(String category);
+    public Iterable<Item> findItemsByItemPoolAndCategory(ItemPool itemPool, String category);
+    public Iterable<Category> findChildCategories(String category);
     public Iterable<Item> findAllItems();
+
+    public Configuration updateConfiguration(Configuration currentConfig, Long itemId);
+
+    public ItemPool getItemPoolFromConfiguration(Configuration configuration, String currentCategory);
 }

@@ -10,4 +10,5 @@ import javax.transaction.Transactional;
 
 @Repository
 public interface CategoryRepository extends CrudRepository<Category, Long> {
+    Category findByName(String name);
 }

@@ -68,6 +68,28 @@ public class Category implements Serializable {
         return fatherCategory;
     }
 
+    public boolean isFather(){
+        if (this.childCategories.isEmpty()) {
+            return false;
+        }
+        else return true;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+        Category c = (Category) obj;
+        if (c.getCategoryId() == this.getCategoryId()) {
+            return true;
+        }
+        return false;
+    }
+
     public void setFatherCategory(Category fatherCategory) {
         this.fatherCategory = fatherCategory;
     }

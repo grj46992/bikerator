@@ -21,4 +21,8 @@ public class DepotItem implements Serializable {
     public DepotItem(Item item) {
         this.item = item;
     }
+
+    public Item getItem() {
+        return item;
+    }
 }

@@ -1,5 +1,7 @@
 package de.othr.se.grj46992.bikerator.service;
 
+import de.othr.se.grj46992.bikerator.entity.Address;
+import de.othr.se.grj46992.bikerator.entity.Configuration;
 import de.othr.se.grj46992.bikerator.entity.Customer;
 import de.othr.se.grj46992.bikerator.repository.AddressRepository;
 import de.othr.se.grj46992.bikerator.repository.CustomerRepository;
@@ -29,6 +31,7 @@ public class CustomerManagementService implements CustomerManagementServiceIF, U
     @Override
     public void createCustomer(Customer customer) {
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
+        addressRepository.save(customer.getAddress());
         customerRepository.save(customer);
     }
 
@@ -46,5 +49,11 @@ public class CustomerManagementService implements CustomerManagementServiceIF, U
         } else {
             return customer;
         }
+    }
+
+    @Override
+    public Customer findByUsername(String username) {
+        Customer user = customerRepository.findByUsername(username);
+        return user;
     }
 }
