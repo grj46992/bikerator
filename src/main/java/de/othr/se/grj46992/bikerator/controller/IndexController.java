@@ -87,7 +87,13 @@ public class IndexController {
 
     @RequestMapping("/artikel")
     public String listItems(Model model) {
-        model.addAttribute("items", articleManagementService.findItemsByCategory("Fahrradrahmen"));
+        model.addAttribute("items", articleManagementService.findAllItems());
         return "artikel";
+    }
+
+    @RequestMapping("/itempools")
+    public String itempools(Model model) {
+        model.addAttribute("itempools", articleManagementService.findAllItemPools());
+        return "itempools";
     }
 }

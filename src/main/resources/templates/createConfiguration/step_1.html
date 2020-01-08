@@ -26,5 +26,8 @@
     </ul>
     <button type="submit" class="btn btn-primary">Weiter</button>
 </form>
+<ul th:each="elem: ${config.getItemList()}">
+    <li th:text="${elem.name}"></li>
+</ul>
 </body>
 </html>

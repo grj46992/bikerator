@@ -40,6 +40,12 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
+    public Iterable<ItemPool> findAllItemPools() {
+        Iterable<ItemPool> allItems = itemPoolRepository.findAll();
+        return allItems;
+    }
+
+    @Override
     public Iterable<Category> findChildCategories(String category) {
         Category current = categoryRepository.findByName(category);
         if (current.isFather()) {
@@ -78,27 +84,37 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
+    public void updateItemPool(ItemPool itemPool) {
+        itemPoolRepository.save(itemPool);
+    }
+
+    @Override
     public void createDepotItem(DepotItem depotItem) {
         depotItemRepository.save(depotItem);
     }
 
     @Override
-    public Iterable<Item> findItemsByItemPoolAndCategory(ItemPool itemPool, String category) {
-        Category current = categoryRepository.findByName(category);
-        if (current.isFather()) {
-            Collection<Category> children = current.getChildCategories();
-            List<Item> itemList = new ArrayList<Item>();
-            for (Category temp: children) {
-                itemList.addAll(itemRepository.findByItemPoolAndCategory(itemPool, temp));
+    public Iterable<Item> findItemsByItemPoolListAndCategory(List<ItemPool> itemPoolList, String category) {
+        System.out.println("1-----" + itemPoolList.size() + "\n");
+        List<Item> completeItemList = new ArrayList<Item>();
+        Category currentCategory = categoryRepository.findByName(category);
+        System.out.println("2-----" + currentCategory.getName() + "\n");
+        for (ItemPool itemPool: itemPoolList) {
+            Optional<ItemPool> optional = itemPoolRepository.findById(itemPool.getItemPoolId());
+            if (optional.isPresent()) {
+                ItemPool currentItemPool = optional.get();
+                System.out.println("3-----" + currentItemPool.getItemList().size() + "\n");
+                Collection<Item> itemList = currentItemPool.getItemList();
+                for (Item item: itemList) {
+                    System.out.println("4-----" + item.getCategory().getName() + "\n");
+                    if (item.getCategory().equals(currentCategory)) {
+                        System.out.println("add something\n");
+                        completeItemList.add(item);
+                    }
+                }
             }
-            Iterable<Item> items = itemList;
-            return  items;
         }
-        else {
-            Collection<Item> itemList = itemRepository.findByItemPoolAndCategory(itemPool, current);
-            Iterable<Item> items = itemList;
-            return items;
-        }
+        return completeItemList;
     }
 
     @Override
@@ -142,20 +158,19 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
-    public ItemPool getItemPoolFromConfiguration(Configuration configuration, String currentCategory) {
+    public List<ItemPool> getItemPoolListFromConfiguration(Configuration configuration, String currentCategory) {
         if (configuration.getItemList().isEmpty()) {
             return null;
         } else {
             List<Item> itemList = configuration.getItemList();
             for (Item item: itemList) {
-                System.out.println(item.getCategory().getFatherCategory().getName() + "\n" + currentCategory + "\n");
                 if (item.getCategory().getFatherCategory() != null) {
-                    if (item.getCategory().getFatherCategory().getName() == currentCategory) {
-                        return item.getItemPool();
+                    if (item.getCategory().getFatherCategory().getName().equals(currentCategory)) {
+                        return item.getItemPoolList();
                     }
                 } else {
-                    if (item.getCategory().getName() == currentCategory) {
-                        return item.getItemPool();
+                    if (item.getCategory().getName().equals(currentCategory)) {
+                        return item.getItemPoolList();
                     }
                 }
             }

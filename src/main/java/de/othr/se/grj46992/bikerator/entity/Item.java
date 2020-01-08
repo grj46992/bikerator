@@ -3,6 +3,7 @@ package de.othr.se.grj46992.bikerator.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,8 +20,8 @@ public class Item implements Serializable {
     private String imagePath;
     @ManyToOne
     private Category category;
-    @ManyToOne
-    private ItemPool itemPool;
+    @ManyToMany
+    private List<ItemPool> itemPoolList;
     @ElementCollection
     @OneToMany(mappedBy = "item")
     private List<DepotItem> depotItemList;
@@ -28,13 +29,22 @@ public class Item implements Serializable {
     public Item(){
     }
 
-    public Item(String name, String description, Double price, Double weight, Category category, ItemPool itemPool) {
+    public Item(String name, String description, Double price, Double weight, Category category) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.weight = weight;
         this.category = category;
-        this.itemPool = itemPool;
+        this.itemPoolList = new ArrayList<ItemPool>();
+    }
+
+    public Item(String name, String description, Double price, Double weight, Category category, List<ItemPool> itemPoolList) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.weight = weight;
+        this.category = category;
+        this.itemPoolList = itemPoolList;
     }
 
     public Long getItemId() {
@@ -93,12 +103,14 @@ public class Item implements Serializable {
         this.category = category;
     }
 
-    public ItemPool getItemPool() {
-        return itemPool;
+    public List<ItemPool> getItemPoolList() {
+        return itemPoolList;
     }
 
-    public void setItemPool(ItemPool itemPool) {
-        this.itemPool = itemPool;
+    public void addItemPool(ItemPool itemPool){ this.itemPoolList.add(itemPool); }
+
+    public void setItemPoolList(List<ItemPool> itemPoolList) {
+        this.itemPoolList = itemPoolList;
     }
 
     public List<DepotItem> getDepotItemList() {

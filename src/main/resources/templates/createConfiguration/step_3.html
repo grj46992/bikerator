@@ -9,7 +9,7 @@
 </head>
 <body>
 <div th:replace="fragments/navbar :: navbar"></div>
-<form th:action="@{/createConfiguration/step_3}" th:method="post">
+<form th:action="@{/createConfiguration/step_4}" th:method="post">
     <ul th:each="elem: ${itemMap}">
         <li>
             <h3 th:text="${elem.key}"></h3>

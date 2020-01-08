@@ -13,7 +13,7 @@ public class ItemPool implements Serializable {
     @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long itemPoolId;
-    @OneToMany(mappedBy = "itemPool")
+    @ManyToMany(mappedBy = "itemPoolList")
     private List<Item> itemList;
 
     public ItemPool() {
