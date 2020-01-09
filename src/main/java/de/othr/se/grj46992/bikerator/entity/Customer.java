@@ -108,4 +108,12 @@ public class Customer implements Serializable, UserDetails {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public void addConfiguration(Configuration config) {
+        this.configList.add(config);
+    }
+
+    public List<Configuration> getConfigList() {
+        return configList;
+    }
 }

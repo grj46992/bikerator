@@ -26,11 +26,26 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     @Autowired
     private DepotItemRepository depotItemRepository;
 
+    private String[] categoryOrder = {"Fahrradrahmen", "Fahrradfelgen", "Fahrradreifen", "Fahrradschaltwerke"};
 
     @Override
     public Iterable<Category> findAllCategories() {
         Iterable<Category> allCategories = categoryRepository.findAll();
         return allCategories;
+    }
+
+    @Override
+    public String findFirstCategory() {
+        return categoryRepository.findByName(this.categoryOrder[0]).getName();
+    }
+
+    @Override
+    public String findCategoryByIndex(int index) {
+        if (index <= this.categoryOrder.length-1) {
+            return categoryRepository.findByName(this.categoryOrder[index]).getName();
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -47,11 +62,13 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
 
     @Override
     public Iterable<Category> findChildCategories(String category) {
-        Category current = categoryRepository.findByName(category);
-        if (current.isFather()) {
-            Iterable<Category> children = current.getChildCategories();
-            return children;
-        } else return null;
+            Category currentCategory = categoryRepository.findByName(category);
+            if (currentCategory.isFather()) {
+                Iterable<Category> children = currentCategory.getChildCategories();
+                return children;
+            } else {
+                return null;
+            }
     }
 
     @Override
@@ -95,20 +112,15 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
 
     @Override
     public Iterable<Item> findItemsByItemPoolListAndCategory(List<ItemPool> itemPoolList, String category) {
-        System.out.println("1-----" + itemPoolList.size() + "\n");
         List<Item> completeItemList = new ArrayList<Item>();
         Category currentCategory = categoryRepository.findByName(category);
-        System.out.println("2-----" + currentCategory.getName() + "\n");
         for (ItemPool itemPool: itemPoolList) {
             Optional<ItemPool> optional = itemPoolRepository.findById(itemPool.getItemPoolId());
             if (optional.isPresent()) {
                 ItemPool currentItemPool = optional.get();
-                System.out.println("3-----" + currentItemPool.getItemList().size() + "\n");
                 Collection<Item> itemList = currentItemPool.getItemList();
                 for (Item item: itemList) {
-                    System.out.println("4-----" + item.getCategory().getName() + "\n");
                     if (item.getCategory().equals(currentCategory)) {
-                        System.out.println("add something\n");
                         completeItemList.add(item);
                     }
                 }
@@ -158,7 +170,11 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
-    public List<ItemPool> getItemPoolListFromConfiguration(Configuration configuration, String currentCategory) {
+    public List<ItemPool> findItemPoolListByConfiguration(Configuration configuration, String currentCategory) {
+        // TODO besser lösen
+        if (currentCategory == "Fahrradreifen") {
+            currentCategory = "Fahrradrahmen";
+        }
         if (configuration.getItemList().isEmpty()) {
             return null;
         } else {
@@ -176,5 +192,25 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
             }
         }
         return null;
+    }
+
+    @Override
+    public void saveConfiguration(Configuration configuration) {
+        // TODO contraint error
+        Configuration newConfig = new Configuration();
+        newConfig.setItemList(configuration.getItemList());
+        configurationRepository.save(newConfig);
+        System.out.println(configuration.getConfigurationId());
+    }
+
+    @Override
+    public Configuration findConfigurationById(Long configurationId) {
+        Optional<Configuration> optional = configurationRepository.findById(configurationId);
+        if (optional.isPresent()) {
+            Configuration config = optional.get();
+            return config;
+        } else {
+            return null;
+        }
     }
 }

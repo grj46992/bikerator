@@ -1,50 +1,50 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="fragments/head :: bikerator_head" />
 <head>
     <meta charset="UTF-8">
     <title>Registrierung</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div th:replace="fragments/navbar :: navbar"></div>
+<div th:replace="fragments/navbar :: bikerator_navbar"></div>
 <h1>Registrierung</h1>
-<form th:action="@{/register}" th:method="post">
-    <div class="form-group">
-        <label for="firstname">Vorname:</label>
-        <input type="text" class="form-control" id="firstname" name="firstname">
-    </div>
-    <div class="form-group">
-        <label for="lastname">Nachname:</label>
-        <input type="text" class="form-control" id="lastname" name="lastname">
-    </div>
-    <div class="form-group">
-        <p>Adresse</p>
-        <label for="street">Straße:</label>
-        <input type="text" class="form-control" id="street" name="street">
-        <label for="number">Hausnummer:</label>
-        <input type="text" class="form-control" id="number" name="number">
-        <label for="postcode">Postleitzahl:</label>
-        <input type="text" class="form-control" id="postcode" name="postcode">
-        <label for="town">Stadt:</label>
-        <input type="text" class="form-control" id="town" name="town">
-        <label for="country">Land:</label>
-        <input type="text" class="form-control" id="country" name="country">
-    </div>
-    <div class="form-group">
-        <label for="username">Benutzername:</label>
-        <input type="text" class="form-control" id="username" name="username">
-    </div>
-    <div class="form-group">
-        <label for="password">Passwort:</label>
-        <input type="password" class="form-control" id="password" name="password">
-    </div>
-    <div class="form-group">
-        <label for="email">Email-Adresse:</label>
-        <input type="text" class="form-control" id="email" name="email">
-    </div>
-    <button type="submit" class="btn btn-primary">Registrieren</button>
-</form>
+<div class="container">
+    <form th:action="@{/register}" th:method="post">
+        <div class="form-group">
+            <label for="firstname">Vorname:</label>
+            <input type="text" class="form-control" id="firstname" name="firstname">
+        </div>
+        <div class="form-group">
+            <label for="lastname">Nachname:</label>
+            <input type="text" class="form-control" id="lastname" name="lastname">
+        </div>
+        <div class="form-group">
+            <p>Adresse</p>
+            <label for="street">Straße:</label>
+            <input type="text" class="form-control" id="street" name="street">
+            <label for="number">Hausnummer:</label>
+            <input type="text" class="form-control" id="number" name="number">
+            <label for="postcode">Postleitzahl:</label>
+            <input type="text" class="form-control" id="postcode" name="postcode">
+            <label for="town">Stadt:</label>
+            <input type="text" class="form-control" id="town" name="town">
+            <label for="country">Land:</label>
+            <input type="text" class="form-control" id="country" name="country">
+        </div>
+        <div class="form-group">
+            <label for="username">Benutzername:</label>
+            <input type="text" class="form-control" id="username" name="username">
+        </div>
+        <div class="form-group">
+            <label for="password">Passwort:</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+        <div class="form-group">
+            <label for="email">Email-Adresse:</label>
+            <input type="text" class="form-control" id="email" name="email">
+        </div>
+        <button type="submit" class="btn btn-primary">Registrieren</button>
+    </form>
+</div>
 </body>
 </html>

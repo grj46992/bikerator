@@ -11,5 +11,5 @@ public interface CustomerManagementServiceIF {
     public Iterable<Customer> findAllCustomers();
     public Customer findByUsername(String username);
     public UserDetails loadUserByUsername(String username);
-
+    public void updateCustomerConfigurationList(Customer user, Configuration configuration);
 }

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="fragments/head :: bikerator_head" />
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:replace="fragments/navbar :: bikerator_navbar"></div>
+<div class="container">
+    <ul th:object="${user}">
+        <li th:text="${user.getFirstname()}"></li>
+        <li th:text="${user.getLastname()}"></li>
+        <li th:text="${user.getConfigList()}"></li>
+        <li th:text="${user.getUsername()}"></li><
+        <li th:text="${user.getAddress().getTown()}"></li>
+    </ul>
+    <div th:each="config: ${configList}">
+        <div th:each="item: ${config.getItemList()}">
+            <ul>
+                <li th:text="${item.getName()}"></li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

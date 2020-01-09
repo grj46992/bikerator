@@ -72,4 +72,8 @@ public class Configuration implements Serializable {
     public void removeItem(Item item) {
         this.itemList.remove(item);
     }
+
+    public void setItemList(List<Item> itemList) {
+        this.itemList = itemList;
+    }
 }

@@ -56,4 +56,9 @@ public class CustomerManagementService implements CustomerManagementServiceIF, U
         Customer user = customerRepository.findByUsername(username);
         return user;
     }
+
+    @Override
+    public void updateCustomerConfigurationList(Customer user, Configuration configuration) {
+        user.addConfiguration(configuration);
+    }
 }

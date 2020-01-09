@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="fragments/head :: bikerator_head" />
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<div th:replace="fragments/navbar :: bikerator_navbar"></div>
+<div class="container"></div>
+    <form th:action="@{/createConfiguration/next}" th:method="post">
+        <input type="hidden" th:name="currentCategory" th:value="${currentCategory}"/>
+        <ul th:each="elem: ${itemMap}">
+            <li>
+                <h3 th:text="${elem.key}"></h3>
+                <ul th:each="item: ${elem.value}">
+                    <li>
+                        <input type="radio" th:name="itemId" th:value="${item.itemId}">
+                            <span th:text="${item.name}"></span>
+                            <span th:text="${item.description}"></span>
+                            <span th:text="${item.price}"></span>
+                        </input>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <button type="submit" class="btn btn-primary">Weiter</button>
+    </form>
+</div>
+</body>
+</html>

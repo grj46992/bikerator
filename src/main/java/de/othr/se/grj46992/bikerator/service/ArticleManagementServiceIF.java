@@ -15,9 +15,12 @@ public interface ArticleManagementServiceIF {
     public Iterable<Item> findItemsByCategory(String category);
     public Iterable<Item> findItemsByItemPoolListAndCategory(List<ItemPool> itemPoolList, String category);
     public Iterable<Category> findChildCategories(String category);
+    public String findFirstCategory();
+    public String findCategoryByIndex(int index);
     public Iterable<Item> findAllItems();
     public Iterable<ItemPool> findAllItemPools();
     public Configuration updateConfiguration(Configuration currentConfig, Long itemId);
-
-    public List<ItemPool> getItemPoolListFromConfiguration(Configuration configuration, String currentCategory);
+    public void saveConfiguration(Configuration config);
+    public Configuration findConfigurationById(Long configurationId);
+    public List<ItemPool> findItemPoolListByConfiguration(Configuration configuration, String currentCategory);
 }
