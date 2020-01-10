@@ -60,5 +60,6 @@ public class CustomerManagementService implements CustomerManagementServiceIF, U
     @Override
     public void updateCustomerConfigurationList(Customer user, Configuration configuration) {
         user.addConfiguration(configuration);
+        customerRepository.save(user);
     }
 }

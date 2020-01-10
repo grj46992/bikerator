@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@Embeddable
 public class Configuration implements Serializable {
     @Id
     @NotNull
@@ -17,8 +18,10 @@ public class Configuration implements Serializable {
     private String description;
     private Date createDate;
     private Double amountTotal;
-    @ElementCollection
-    @OneToMany
+    @ManyToMany
+    @JoinTable(name = "configuration_items",
+            joinColumns = {@JoinColumn(name = "configurationId")},
+            inverseJoinColumns = {@JoinColumn(name = "itemId")})
     private List<Item> itemList;
 
     public Configuration () {

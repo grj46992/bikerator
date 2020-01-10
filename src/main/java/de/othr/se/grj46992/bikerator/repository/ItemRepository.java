@@ -12,4 +12,5 @@ import java.util.Collection;
 public interface ItemRepository extends CrudRepository<Item, Long> {
     Iterable<Item> findByCategory(Category category);
     Iterable<Item> findByCategoryIn(Collection<Category> categories);
+    Item findByName(String name);
 }

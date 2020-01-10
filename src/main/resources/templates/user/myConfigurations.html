@@ -8,18 +8,14 @@
 <body>
 <div th:replace="fragments/navbar :: bikerator_navbar"></div>
 <div class="container">
-    <ul th:object="${user}">
-        <li th:text="${user.getFirstname()}"></li>
-        <li th:text="${user.getLastname()}"></li>
-        <li th:text="${user.getConfigList()}"></li>
-        <li th:text="${user.getUsername()}"></li><
-        <li th:text="${user.getAddress().getTown()}"></li>
-    </ul>
-    <div th:each="config: ${configList}">
-        <div th:each="item: ${config.getItemList()}">
-            <ul>
-                <li th:text="${item.getName()}"></li>
+    <div class="row">
+        <div class="col-md-4" th:each="config: ${configList}">
+            <span th:text="${config.getName()}"></span>
+            <span th:text="${config.getDescription()}"></span>
+            <ul th:each="item: ${config.getItemList()}">
+                    <li th:text="${item.getName()}"></li>
             </ul>
+            <a class="btn btn-primary" th:href="@{'/user/editConfiguration?id=' + ${config.getConfigurationId()}}">Bearbeiten</a>
         </div>
     </div>
 </div>

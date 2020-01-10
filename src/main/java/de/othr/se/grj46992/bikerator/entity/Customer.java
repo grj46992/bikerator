@@ -21,14 +21,13 @@ public class Customer implements Serializable, UserDetails {
     private String lastname;
     private String email;
     private String password;
+    @ElementCollection
     @OneToOne
     private Address address;
     @OneToOne
     private Order currentOrder;
-    @ElementCollection
     @OneToMany(mappedBy = "customer")
     private List<Order> completedOrderList;
-    @ElementCollection
     @OneToMany
     private List<Configuration> configList;
 

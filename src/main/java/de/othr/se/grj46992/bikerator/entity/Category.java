@@ -15,12 +15,10 @@ public class Category implements Serializable {
     private String name;
     private String description;
     private String  imagePath;
-    @ElementCollection
     @OneToMany(mappedBy = "category")
     private List<Item> itemList;
     @ManyToOne
     private Category fatherCategory;
-    @ElementCollection
     @OneToMany(mappedBy = "fatherCategory")
     private List<Category> childCategories;
 

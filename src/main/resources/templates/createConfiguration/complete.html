@@ -11,7 +11,14 @@
     <ul th:each="elem: ${config.getItemList()}">
         <li th:text="${elem.name}"></li>
     </ul>
-    <a class="btn btn-primary" th:href="@{/createConfiguration/save}">Konfiguration speichern</a>
+    <div class="container" sec:authorize="!isAuthenticated()">
+        <a th:href="@{/user/editConfiguration}" th:name="config" th:value="${config}">Einloggen um Konfiguration zu speichern</a>
+    </div>
+    <div class="container" sec:authorize="isAuthenticated()">
+        <a th:href="@{/user/editConfiguration}" th:name="config" th:value="${config}">Konfiguration speichern</a>
+    </div>
+
+    <a th:href="@{/home}">Konfiguratio kaufen</a>
 </div>
 </body>
 </html>

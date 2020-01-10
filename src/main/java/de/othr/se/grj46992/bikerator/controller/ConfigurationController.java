@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class ConfigurationController {
         //Create Configuration in Session if not exists
         Configuration currentConfig = (Configuration) session.getAttribute("configuration");
         if (currentConfig != null) {
-            Configuration updatedConfig = articleManagementService.updateConfiguration(currentConfig, itemId);
+            Configuration updatedConfig = articleManagementService.updateConfigurationItemList(currentConfig, itemId);
             session.setAttribute("configuration", updatedConfig);
         } else {
             session.setAttribute("configuration", new Configuration());
@@ -126,29 +127,68 @@ public class ConfigurationController {
         }
     }
 
-    @RequestMapping("/createConfiguration/save")
+    @RequestMapping("/user/editConfiguration/save")
     public String createConfigurationSave(
+            @ModelAttribute("name") String name,
+            @ModelAttribute("beschreibung") String beschreibung,
+            @RequestParam(required = false, name = "id") Long configId,
             HttpSession session,
             Principal principal,
             Model model
     ) {
-        Configuration currentConfig = (Configuration) session.getAttribute("configuration");
         Customer user = customerManagementService.findByUsername(principal.getName());
-        articleManagementService.saveConfiguration(currentConfig);
-        customerManagementService.updateCustomerConfigurationList(user, currentConfig);
-        model.addAttribute("configList", user.getConfigList());
+        Configuration currentConfig;
+        Long configurationId;
+        if (configId != null) {
+            currentConfig = articleManagementService.findConfigurationById(configId);
+            currentConfig.setName(name);
+            currentConfig.setDescription(beschreibung);
+            configurationId = articleManagementService.updateConfiguration(currentConfig);
+        } else {
+            currentConfig = (Configuration) session.getAttribute("configuration");
+            currentConfig.setCreateDate(new Date(System.currentTimeMillis()));
+            currentConfig.setName(name);
+            currentConfig.setDescription(beschreibung);
+            configurationId = articleManagementService.createConfiguration(currentConfig);
+            customerManagementService.updateCustomerConfigurationList(user, articleManagementService.findConfigurationById(configurationId));
+        }
+
+        Iterable<Configuration> configList = user.getConfigList();
+        model.addAttribute("user", user);
+        model.addAttribute("configList", configList);
+        return "user/myConfigurations";
+    }
+
+    @RequestMapping("/user/myConfigurations")
+    public String editConfigurations(
+            @RequestParam(required = false, name = "id") Long configId,
+            HttpSession session,
+            Principal principal,
+            Model model
+    ) {
+
+        Configuration currentConfig = (Configuration) session.getAttribute("configuration");
+
+        if (configId != null) {
+            currentConfig = articleManagementService.findConfigurationById(configId);
+            model.addAttribute("configExists", true);
+        }
+
+        model.addAttribute("config", currentConfig);
         return "user/editConfiguration";
     }
 
-    @RequestMapping("/user/editConfiguration")
-    public String editConfigurations(
-            @RequestParam("id") Long configurationId,
+    @RequestMapping("/user/myConfigurations")
+    public String myConfigurations(
+            @RequestParam(required = false, name = "id") Long configId,
             HttpSession session,
             Principal principal,
             Model model
     ) {
-        Configuration currentConfig = articleManagementService.findConfigurationById(configurationId);
-        model.addAttribute("config", currentConfig);
-        return "user/editConfiguration";
+        Customer user = customerManagementService.findByUsername(principal.getName());
+        Iterable<Configuration> configList = user.getConfigList();
+        model.addAttribute("user", user);
+        model.addAttribute("configList", configList);
+        return "user/myConfigurations";
     }
 }

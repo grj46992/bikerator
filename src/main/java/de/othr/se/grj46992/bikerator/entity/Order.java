@@ -22,7 +22,6 @@ public class Order implements Serializable {
     private Address billingAddress;
     @OneToOne
     private Customer customer;
-    @ElementCollection
     @OneToMany
     private List<Configuration> configList;
 

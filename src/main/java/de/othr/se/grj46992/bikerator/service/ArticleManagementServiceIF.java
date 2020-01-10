@@ -19,8 +19,9 @@ public interface ArticleManagementServiceIF {
     public String findCategoryByIndex(int index);
     public Iterable<Item> findAllItems();
     public Iterable<ItemPool> findAllItemPools();
-    public Configuration updateConfiguration(Configuration currentConfig, Long itemId);
-    public void saveConfiguration(Configuration config);
+    public Long updateConfiguration(Configuration configuration);
+    public Configuration updateConfigurationItemList(Configuration currentConfig, Long itemId);
+    public Long createConfiguration(Configuration config);
     public Configuration findConfigurationById(Long configurationId);
     public List<ItemPool> findItemPoolListByConfiguration(Configuration configuration, String currentCategory);
 }

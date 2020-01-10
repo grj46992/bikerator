@@ -130,7 +130,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
-    public Configuration updateConfiguration(Configuration currentConfig, Long itemId){
+    public Configuration updateConfigurationItemList(Configuration currentConfig, Long itemId){
         Optional<Item> optional = itemRepository.findById(itemId);
         // Check if item exists
         if (optional.isPresent()) {
@@ -170,6 +170,12 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
+    public Long updateConfiguration(Configuration configuration) {
+        Configuration updatedConfig = configurationRepository.save(configuration);
+        return updatedConfig.getConfigurationId();
+    }
+
+    @Override
     public List<ItemPool> findItemPoolListByConfiguration(Configuration configuration, String currentCategory) {
         // TODO besser lösen
         if (currentCategory == "Fahrradreifen") {
@@ -195,12 +201,9 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
-    public void saveConfiguration(Configuration configuration) {
-        // TODO contraint error
-        Configuration newConfig = new Configuration();
-        newConfig.setItemList(configuration.getItemList());
-        configurationRepository.save(newConfig);
-        System.out.println(configuration.getConfigurationId());
+    public Long createConfiguration(Configuration configuration) {
+        Configuration newConf = configurationRepository.save(configuration);
+        return newConf.getConfigurationId();
     }
 
     @Override

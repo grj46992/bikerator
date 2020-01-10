@@ -22,9 +22,10 @@ public class Item implements Serializable {
     private Category category;
     @ManyToMany
     private List<ItemPool> itemPoolList;
-    @ElementCollection
     @OneToMany(mappedBy = "item")
     private List<DepotItem> depotItemList;
+    @ManyToMany(mappedBy = "itemList")
+    private List<Configuration> configurationList;
 
     public Item(){
     }
