@@ -33,6 +33,19 @@ public class IndexController {
         return "login";
     }
 
+    @RequestMapping("/account")
+    public String account(
+            HttpSession session,
+            Principal principal,
+            Model model
+    ) {
+        Configuration currentConfig = (Configuration) session.getAttribute("configuration");
+        if (currentConfig != null) {
+            model.addAttribute("openConfig", currentConfig);
+        }
+        return "account";
+    }
+
     @RequestMapping("/logout")
     public String logout() {
         return "index";
@@ -41,11 +54,6 @@ public class IndexController {
     @RequestMapping("/signup")
     public String signup() {
         return "signup";
-    }
-
-    @RequestMapping("/account")
-    public String account() {
-        return "account";
     }
 
     @RequestMapping("/register")
@@ -76,7 +84,7 @@ public class IndexController {
         address.setCountry(country);
         customer.setAddress(address);
         customerManagementService.createCustomer(customer);
-        return "index";
+        return "login";
     }
 
     @RequestMapping("/kategorien")

@@ -31,6 +31,7 @@
         <button type="submit" class="btn btn-primary">Zurück</button>
     </form>
 </div>
+<p>Gesamtbetrag: <span th:text="${config.getAmountTotal()}"></span></p>
 <ul th:each="elem: ${config.getItemList()}">
     <li th:text="${elem.name}"></li>
 </ul>

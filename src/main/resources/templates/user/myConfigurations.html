@@ -8,6 +8,7 @@
 <body>
 <div th:replace="fragments/navbar :: bikerator_navbar"></div>
 <div class="container">
+    <p th:if="${maxNumberError}">Konfiguration konnte nicht gespeichert werden. Sie haben bereits die maximale Anzahl erreicht.</p>
     <div class="row">
         <div class="col-md-4" th:each="config: ${configList}">
             <span th:text="${config.getName()}"></span>
@@ -15,7 +16,9 @@
             <ul th:each="item: ${config.getItemList()}">
                     <li th:text="${item.getName()}"></li>
             </ul>
+            <p>Gesamtbetrag: <span th:text="${config.getAmountTotal()}"></span></p>
             <a class="btn btn-primary" th:href="@{'/user/editConfiguration?id=' + ${config.getConfigurationId()}}">Bearbeiten</a>
+            <a class="btn btn-primary" th:href="@{/home}">Auf Friendzone posten</a>
         </div>
     </div>
 </div>

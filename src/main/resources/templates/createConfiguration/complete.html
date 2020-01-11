@@ -6,19 +6,27 @@
     <title>Title</title>
 </head>
 <body>
-<div th:replace="fragments/navbar :: bikerator_navbar"></div>
-<div class="container">
-    <ul th:each="elem: ${config.getItemList()}">
-        <li th:text="${elem.name}"></li>
-    </ul>
-    <div class="container" sec:authorize="!isAuthenticated()">
-        <a th:href="@{/user/editConfiguration}" th:name="config" th:value="${config}">Einloggen um Konfiguration zu speichern</a>
+    <div th:replace="fragments/navbar :: bikerator_navbar"></div>
+    <div class="container">
+        <ul th:each="elem: ${config.getItemList()}">
+            <li th:text="${elem.name}"></li>
+        </ul>
+        <div th:if="${currentCategory} != null">
+            <form th:action="@{/createConfiguration/back}" th:method="post">
+                <input type="hidden" th:name="currentCategory" th:value="${currentCategory}"/>
+                <button type="submit" class="btn btn-primary">Zurück</button>
+            </form>
+        </div>
+        <div class="container" sec:authorize="!isAuthenticated()">
+            <a th:href="@{/user/editConfiguration}">Einloggen um Konfiguration zu speichern</a>
+        </div>
+        <div class="container" sec:authorize="isAuthenticated()">
+            <a th:href="@{/user/editConfiguration}">Konfiguration speichern</a>
+        </div>
+        <div class="container" sec:authorize="!isAuthenticated()">
+            <a th:href="@{/signup}">Jetzt registrieren</a>
+        </div>
+        <a th:href="@{'/checkout/summary?id='}">Konfiguration kaufen</a>
     </div>
-    <div class="container" sec:authorize="isAuthenticated()">
-        <a th:href="@{/user/editConfiguration}" th:name="config" th:value="${config}">Konfiguration speichern</a>
-    </div>
-
-    <a th:href="@{/home}">Konfiguratio kaufen</a>
-</div>
 </body>
 </html>

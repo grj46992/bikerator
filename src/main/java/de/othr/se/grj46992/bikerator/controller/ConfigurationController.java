@@ -24,13 +24,16 @@ public class ConfigurationController {
     @Autowired
     private ArticleManagementServiceIF articleManagementService;
 
+    private static final int MAX_NUMBER_OF_CONFIGURATIONS = 6;
+
     @RequestMapping("/createConfiguration/start")
     public String createConfigurationStart(
+            @RequestParam(required = false, name = "id") Long configId,
             HttpSession session,
             Principal principal,
             Model model
     ) {
-        //Create Configuration in Session if not exists
+        //Create Configuration in Session
         session.setAttribute("configuration", new Configuration());
 
         //Load Categories and Items
@@ -42,6 +45,39 @@ public class ConfigurationController {
         model.addAttribute("itemMap", itemMap);
         model.addAttribute("currentCategory", 0);
         return "createConfiguration/start";
+    }
+
+    @RequestMapping("/createConfiguration")
+    public String createConfiguration(
+            HttpSession session,
+            Principal principal,
+            Model model
+    ) {
+
+        //Create Configuration in Session if not exists
+        Configuration currentConfig = (Configuration) session.getAttribute("configuration");
+
+        int currentCategoryIndex = articleManagementService.findLastIndexByConfigurationItemList(currentConfig);
+        int nextCategoryIndex = currentCategoryIndex + 1;
+        if (articleManagementService.findCategoryByIndex(nextCategoryIndex) == null) {
+            // Next Category does not exists
+            model.addAttribute("currentCategory", nextCategoryIndex);
+            model.addAttribute("config", session.getAttribute("configuration"));
+            return "createConfiguration/complete";
+        } else {
+            //Load Categories and Items
+            Iterable<Category> children = articleManagementService.findChildCategories(articleManagementService.findCategoryByIndex(nextCategoryIndex));
+            List<ItemPool> currentItemPoolList = articleManagementService.findItemPoolListByConfiguration((Configuration) session.getAttribute("configuration"), articleManagementService.findCategoryByIndex(currentCategoryIndex));
+
+            HashMap<String, Iterable<Item>> itemMap = new HashMap<String, Iterable<Item>>();
+            for (Category c : children) {
+                itemMap.put(c.getName(), articleManagementService.findItemsByItemPoolListAndCategory(currentItemPoolList, c.getName()));
+            }
+            model.addAttribute("itemMap", itemMap);
+            model.addAttribute("config", session.getAttribute("configuration"));
+            model.addAttribute("currentCategory", nextCategoryIndex);
+            return "createConfiguration/configuration";
+        }
     }
 
     @RequestMapping("/createConfiguration/next")
@@ -56,17 +92,17 @@ public class ConfigurationController {
         //Create Configuration in Session if not exists
         Configuration currentConfig = (Configuration) session.getAttribute("configuration");
         if (currentConfig != null) {
-            Configuration updatedConfig = articleManagementService.updateConfigurationItemList(currentConfig, itemId);
+            Configuration updatedConfig = articleManagementService.updateConfigurationItemListAddItem(currentConfig, itemId);
             session.setAttribute("configuration", updatedConfig);
         } else {
             session.setAttribute("configuration", new Configuration());
         }
 
         int nextCategoryIndex = currentCategoryIndex + 1;
-
         if (articleManagementService.findCategoryByIndex(nextCategoryIndex) == null) {
             // Next Category does not exists
-            model.addAttribute("config", (Configuration)session.getAttribute("configuration"));
+            model.addAttribute("currentCategory", nextCategoryIndex);
+            model.addAttribute("config", session.getAttribute("configuration"));
             return "createConfiguration/complete";
         } else {
             //Load Categories and Items
@@ -78,8 +114,7 @@ public class ConfigurationController {
                 itemMap.put(c.getName(), articleManagementService.findItemsByItemPoolListAndCategory(currentItemPoolList, c.getName()));
             }
             model.addAttribute("itemMap", itemMap);
-
-            model.addAttribute("config", (Configuration) session.getAttribute("configuration"));
+            model.addAttribute("config", session.getAttribute("configuration"));
             model.addAttribute("currentCategory", nextCategoryIndex);
             return "createConfiguration/configuration";
         }
@@ -92,10 +127,8 @@ public class ConfigurationController {
             Principal principal,
             Model model
     ) {
-        Configuration currentConfig = (Configuration) session.getAttribute("configuration");
 
         int previousCategoryIndex = currentCategoryIndex - 1;
-
         if (previousCategoryIndex == 0) {
             //Previous Category is first Category
             //Create Configuration in Session if not exists
@@ -111,6 +144,15 @@ public class ConfigurationController {
             model.addAttribute("currentCategory", 0);
             return "createConfiguration/start";
         } else {
+
+            Configuration currentConfig = (Configuration) session.getAttribute("configuration");
+            if (currentConfig != null) {
+                Configuration updatedConfig = articleManagementService.updateConfigurationItemListRemoveItem(currentConfig, articleManagementService.findCategoryByIndex(previousCategoryIndex));
+                session.setAttribute("configuration", updatedConfig);
+            } else {
+                session.setAttribute("configuration", new Configuration());
+            }
+
             //Load Categories and Items
             Iterable<Category> children = articleManagementService.findChildCategories(articleManagementService.findCategoryByIndex(previousCategoryIndex));
             List<ItemPool> currentItemPoolList = articleManagementService.findItemPoolListByConfiguration((Configuration) session.getAttribute("configuration"), articleManagementService.findCategoryByIndex(previousCategoryIndex - 1));
@@ -120,17 +162,26 @@ public class ConfigurationController {
                 itemMap.put(c.getName(), articleManagementService.findItemsByItemPoolListAndCategory(currentItemPoolList, c.getName()));
             }
             model.addAttribute("itemMap", itemMap);
-
-            model.addAttribute("config", (Configuration) session.getAttribute("configuration"));
+            model.addAttribute("config", session.getAttribute("configuration"));
             model.addAttribute("currentCategory", previousCategoryIndex);
             return "createConfiguration/configuration";
         }
     }
 
+    @RequestMapping("/createConfiguration/complete")
+    public String createConfigurationComplete(
+            HttpSession session,
+            Principal principal,
+            Model model
+    ) {
+        model.addAttribute("config", session.getAttribute("configuration"));
+        return "createConfiguration/complete";
+    }
+
     @RequestMapping("/user/editConfiguration/save")
     public String createConfigurationSave(
             @ModelAttribute("name") String name,
-            @ModelAttribute("beschreibung") String beschreibung,
+            @ModelAttribute("beschreibung") String description,
             @RequestParam(required = false, name = "id") Long configId,
             HttpSession session,
             Principal principal,
@@ -142,24 +193,29 @@ public class ConfigurationController {
         if (configId != null) {
             currentConfig = articleManagementService.findConfigurationById(configId);
             currentConfig.setName(name);
-            currentConfig.setDescription(beschreibung);
-            configurationId = articleManagementService.updateConfiguration(currentConfig);
+            currentConfig.setDescription(description);
+            articleManagementService.updateConfiguration(currentConfig);
         } else {
-            currentConfig = (Configuration) session.getAttribute("configuration");
-            currentConfig.setCreateDate(new Date(System.currentTimeMillis()));
-            currentConfig.setName(name);
-            currentConfig.setDescription(beschreibung);
-            configurationId = articleManagementService.createConfiguration(currentConfig);
-            customerManagementService.updateCustomerConfigurationList(user, articleManagementService.findConfigurationById(configurationId));
+            if (user.getConfigList().size() >= MAX_NUMBER_OF_CONFIGURATIONS) {
+                model.addAttribute("maxNumberError", true);
+                model.addAttribute("user", user);
+                model.addAttribute("configList", user.getConfigList());
+                return "user/myConfigurations";
+            } else {
+                currentConfig = (Configuration) session.getAttribute("configuration");
+                currentConfig.setCreateDate(new Date(System.currentTimeMillis()));
+                currentConfig.setName(name);
+                currentConfig.setDescription(description);
+                configurationId = articleManagementService.createConfiguration(currentConfig);
+                customerManagementService.updateCustomerConfigurationList(user, articleManagementService.findConfigurationById(configurationId));
+            }
         }
-
-        Iterable<Configuration> configList = user.getConfigList();
         model.addAttribute("user", user);
-        model.addAttribute("configList", configList);
+        model.addAttribute("configList", user.getConfigList());
         return "user/myConfigurations";
     }
 
-    @RequestMapping("/user/myConfigurations")
+    @RequestMapping("/user/editConfiguration")
     public String editConfigurations(
             @RequestParam(required = false, name = "id") Long configId,
             HttpSession session,
@@ -168,14 +224,27 @@ public class ConfigurationController {
     ) {
 
         Configuration currentConfig = (Configuration) session.getAttribute("configuration");
-
         if (configId != null) {
             currentConfig = articleManagementService.findConfigurationById(configId);
             model.addAttribute("configExists", true);
         }
-
         model.addAttribute("config", currentConfig);
         return "user/editConfiguration";
+    }
+
+    @RequestMapping("/user/deleteConfiguration")
+    public String deleteConfigurations(
+            @RequestParam(required = false, name = "id") Long configId,
+            HttpSession session,
+            Principal principal,
+            Model model
+    ) {
+        Customer user = customerManagementService.findByUsername(principal.getName());
+        Configuration currentConfig = articleManagementService.findConfigurationById(configId);
+        articleManagementService.deleteConfiguration(currentConfig, user);
+        model.addAttribute("user", user);
+        model.addAttribute("configList", user.getConfigList());
+        return "user/myConfigurations";
     }
 
     @RequestMapping("/user/myConfigurations")
@@ -186,9 +255,8 @@ public class ConfigurationController {
             Model model
     ) {
         Customer user = customerManagementService.findByUsername(principal.getName());
-        Iterable<Configuration> configList = user.getConfigList();
         model.addAttribute("user", user);
-        model.addAttribute("configList", configList);
+        model.addAttribute("configList",  user.getConfigList());
         return "user/myConfigurations";
     }
 }

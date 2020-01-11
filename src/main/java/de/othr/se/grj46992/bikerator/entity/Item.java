@@ -39,15 +39,6 @@ public class Item implements Serializable {
         this.itemPoolList = new ArrayList<ItemPool>();
     }
 
-    public Item(String name, String description, Double price, Double weight, Category category, List<ItemPool> itemPoolList) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.weight = weight;
-        this.category = category;
-        this.itemPoolList = itemPoolList;
-    }
-
     public Long getItemId() {
         return itemId;
     }

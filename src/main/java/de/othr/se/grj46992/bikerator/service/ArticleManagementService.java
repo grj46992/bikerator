@@ -6,6 +6,7 @@ import org.aspectj.lang.reflect.InterTypeMethodDeclaration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
@@ -25,6 +26,9 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
 
     @Autowired
     private DepotItemRepository depotItemRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
 
     private String[] categoryOrder = {"Fahrradrahmen", "Fahrradfelgen", "Fahrradreifen", "Fahrradschaltwerke"};
 
@@ -46,6 +50,20 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public int findLastIndexByConfigurationItemList(Configuration currentConfiguration) {
+        List<Item> itemList = currentConfiguration.getItemList();
+        for (int i=categoryOrder.length-1 ; i > 0 ; i--) {
+            String category = categoryOrder[i];
+            for (Item item: itemList) {
+                if(item.getCategory().getFatherCategory().getName().equals(category)){
+                    return i;
+                }
+            }
+        }
+        return 0;
     }
 
     @Override
@@ -130,7 +148,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
-    public Configuration updateConfigurationItemList(Configuration currentConfig, Long itemId){
+    public Configuration updateConfigurationItemListAddItem(Configuration currentConfig, Long itemId){
         Optional<Item> optional = itemRepository.findById(itemId);
         // Check if item exists
         if (optional.isPresent()) {
@@ -153,20 +171,54 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
                     if (tempCat.getFatherCategory() != null) {
                         tempCat = tempCat.getFatherCategory();
                     }
-                    // Notice Item to delete
+                    // Delete Item
                     if (cat.equals(tempCat)) {
                         iterator.remove();
                     }
                 }
-                // Delete Item and add new Item
+                // Add new Item
                 currentConfig.addItem(newItem);
             }
-
+            // Update AmountTotal
+            Double newAmountTotal = 0.0;
+            for (Item item: itemList) {
+                newAmountTotal += item.getPrice();
+            }
+            currentConfig.setAmountTotal(newAmountTotal);
             return currentConfig;
         }
         else {
             return currentConfig;
         }
+    }
+
+    @Override
+    public Configuration updateConfigurationItemListRemoveItem(Configuration currentConfig, String currentCategory) {
+        Category cat = categoryRepository.findByName(currentCategory);
+        // If fatherCategory exists, take fatherCategory
+        if (cat.getFatherCategory() != null) {
+            cat = cat.getFatherCategory();
+        }
+        List<Item> itemList = currentConfig.getItemList();
+        ListIterator<Item> iterator = itemList.listIterator();
+        while (iterator.hasNext()) {
+            Category tempCat = iterator.next().getCategory();
+            // If fatherCategory exists, take fatherCategory
+            if (tempCat.getFatherCategory() != null) {
+                tempCat = tempCat.getFatherCategory();
+            }
+            // Delete Item
+            if (cat.equals(tempCat)) {
+                iterator.remove();
+            }
+        }
+        // Update AmountTotal
+        Double newAmountTotal = 0.0;
+        for (Item item: itemList) {
+            newAmountTotal += item.getPrice();
+        }
+        currentConfig.setAmountTotal(newAmountTotal);
+        return currentConfig;
     }
 
     @Override
@@ -204,6 +256,25 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     public Long createConfiguration(Configuration configuration) {
         Configuration newConf = configurationRepository.save(configuration);
         return newConf.getConfigurationId();
+    }
+
+    @Transactional
+    @Override
+    public void deleteConfiguration(Configuration configuration, Customer currentUser) {
+        Optional<Customer> optional = customerRepository.findById(currentUser.getUsername());
+        // Check if item exists
+        if (optional.isPresent()) {
+            Customer user = optional.get();
+            List<Configuration> configList = user.getConfigList();
+            if (configList.contains(configuration)) {
+                if (configList.remove(configuration)) {
+                    customerRepository.save(user);
+                    configurationRepository.deleteById(configuration.getConfigurationId());
+                }
+            } else {
+                configurationRepository.deleteById(configuration.getConfigurationId());
+            }
+        }
     }
 
     @Override

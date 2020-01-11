@@ -26,6 +26,7 @@ public class Configuration implements Serializable {
 
     public Configuration () {
         this.itemList = new ArrayList<Item>();
+        this.amountTotal = 0.0;
     }
 
     public Long getConfigurationId() {
@@ -78,5 +79,20 @@ public class Configuration implements Serializable {
 
     public void setItemList(List<Item> itemList) {
         this.itemList = itemList;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+        Configuration c = (Configuration) obj;
+        if (c.getConfigurationId() == this.getConfigurationId()) {
+            return true;
+        }
+        return false;
     }
 }

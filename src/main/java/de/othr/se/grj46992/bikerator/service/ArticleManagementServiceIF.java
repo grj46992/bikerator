@@ -17,11 +17,14 @@ public interface ArticleManagementServiceIF {
     public Iterable<Category> findChildCategories(String category);
     public String findFirstCategory();
     public String findCategoryByIndex(int index);
+    public int findLastIndexByConfigurationItemList(Configuration currentConfiguration);
     public Iterable<Item> findAllItems();
     public Iterable<ItemPool> findAllItemPools();
     public Long updateConfiguration(Configuration configuration);
-    public Configuration updateConfigurationItemList(Configuration currentConfig, Long itemId);
+    public Configuration updateConfigurationItemListAddItem(Configuration currentConfig, Long itemId);
+    public Configuration updateConfigurationItemListRemoveItem(Configuration currentConfig, String currentCategory);
     public Long createConfiguration(Configuration config);
+    public void deleteConfiguration(Configuration configuration, Customer user);
     public Configuration findConfigurationById(Long configurationId);
     public List<ItemPool> findItemPoolListByConfiguration(Configuration configuration, String currentCategory);
 }
