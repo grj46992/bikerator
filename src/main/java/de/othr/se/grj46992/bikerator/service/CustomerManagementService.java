@@ -3,6 +3,7 @@ package de.othr.se.grj46992.bikerator.service;
 import de.othr.se.grj46992.bikerator.entity.Address;
 import de.othr.se.grj46992.bikerator.entity.Configuration;
 import de.othr.se.grj46992.bikerator.entity.Customer;
+import de.othr.se.grj46992.bikerator.entity.Order;
 import de.othr.se.grj46992.bikerator.repository.AddressRepository;
 import de.othr.se.grj46992.bikerator.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,9 +39,33 @@ public class CustomerManagementService implements CustomerManagementServiceIF, U
     }
 
     @Override
-    public Iterable<Customer> findAllCustomers() {
+    public void  updateCustomer(Customer customer) {
+        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
+        addressRepository.save(customer.getAddress());
+        customerRepository.save(customer);
+    }
+
+    @Override
+    public void  deleteCustomer(Customer customer) {
+        Long addressId = customer.getAddress().getAddressId();
+        customerRepository.deleteById(customer.getUsername());
+        addressRepository.deleteById(addressId);
+    }
+
+    @Override
+    public Iterable<Customer> readAllCustomers() {
         Iterable<Customer> allCustomers = customerRepository.findAll();
         return allCustomers;
+    }
+
+    @Override
+    public List<String> readCustomerEmailList() {
+        List<String> customerEmailList = new ArrayList<String>();
+        Iterable<Customer> allCustomers = customerRepository.findAll();
+        for (Customer customer: allCustomers) {
+            customerEmailList.add(customer.getEmail());
+        }
+        return customerEmailList;
     }
 
     @Override
@@ -52,7 +79,7 @@ public class CustomerManagementService implements CustomerManagementServiceIF, U
     }
 
     @Override
-    public Customer findByUsername(String username) {
+    public Customer readByUsername(String username) {
         Customer user = customerRepository.findByUsername(username);
         return user;
     }
@@ -61,5 +88,21 @@ public class CustomerManagementService implements CustomerManagementServiceIF, U
     public void updateCustomerConfigurationList(Customer user, Configuration configuration) {
         user.addConfiguration(configuration);
         customerRepository.save(user);
+    }
+
+    @Override
+    public void createPost(String title, String text, String email, String password, String picture) {
+        // TODO create post object and send to friendzone
+    }
+
+    @Override
+    public void updateCompletedOrderList(Customer customer, Order order) {
+        customer.addOrderToCompletedOrderList(order);
+        customerRepository.save(customer);
+    }
+    @Override
+    public void deleteCurrentOrder(Customer customer) {
+        customer.setCurrentOrder(null);
+        customerRepository.save(customer);
     }
 }

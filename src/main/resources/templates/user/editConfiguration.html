@@ -19,7 +19,6 @@
                 <input type="text" class="form-control" th:id="beschreibung" th:name="beschreibung" th:value="${config.getDescription()}">
             </div>
             <button type="submit" class="btn btn-primary">Speichern</button>
-            <a class="btn btn-primary" th:href="@{'/user/deleteConfiguration?id=' + ${config.getConfigurationId()}}">Löschen</a>
         </form>
         <form th:unless="${configExists}" th:action="@{/user/editConfiguration/save}" th:method="post">
             <div class="form-group">

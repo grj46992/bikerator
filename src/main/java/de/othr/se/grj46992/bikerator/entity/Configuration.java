@@ -17,17 +17,12 @@ public class Configuration implements Serializable {
     private String name;
     private String description;
     private Date createDate;
-    private Double amountTotal;
+    private Double amountTotal = 0.0;
     @ManyToMany
     @JoinTable(name = "configuration_items",
             joinColumns = {@JoinColumn(name = "configurationId")},
             inverseJoinColumns = {@JoinColumn(name = "itemId")})
-    private List<Item> itemList;
-
-    public Configuration () {
-        this.itemList = new ArrayList<Item>();
-        this.amountTotal = 0.0;
-    }
+    private List<Item> itemList = new ArrayList<Item>();
 
     public Long getConfigurationId() {
         return configurationId;

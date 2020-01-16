@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -26,10 +27,10 @@ public class Customer implements Serializable, UserDetails {
     private Address address;
     @OneToOne
     private Order currentOrder;
-    @OneToMany(mappedBy = "customer")
-    private List<Order> completedOrderList;
-    @OneToMany
-    private List<Configuration> configList;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
+    private List<Order> completedOrderList = new ArrayList<Order>();
+    @OneToMany(cascade = CascadeType.REMOVE)
+    private List<Configuration> configList = new ArrayList<Configuration>();
 
 
     public void setUsername(String username) {
@@ -114,5 +115,21 @@ public class Customer implements Serializable, UserDetails {
 
     public List<Configuration> getConfigList() {
         return configList;
+    }
+
+    public Order getCurrentOrder() {
+        return currentOrder;
+    }
+
+    public void setCurrentOrder(Order currentOrder) {
+        this.currentOrder = currentOrder;
+    }
+
+    public List<Order> getCompletedOrderList() {
+        return completedOrderList;
+    }
+
+    public void addOrderToCompletedOrderList(Order order) {
+        this.completedOrderList.add(order);
     }
 }

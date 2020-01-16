@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="fragments/head :: bikerator_head" />
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:replace="fragments/navbar :: bikerator_navbar"></div>
+<div class="container" th:object="${order}">
+    <h1>Meine Bestellung</h1>
+    <p>Ihre Bestellung umfasst <span th:text="${order.getConfigList().size()}"></span> Konfigurationen.</p>
+    <p>Gesamtbetrag: <span th:text="${order.getAmountOrder()}"></span>€</p>
+    <form th:action="@{/checkout/payment}" th:method="post">
+        <h3>Rechnungsadresse</h3>
+        <p>Straße: <span th:text="${order.getCustomer().getAddress().getStreet()}"></span></p>
+        <p>Straße: <span th:text="${order.getCustomer().getAddress().getNumber()}"></span></p>
+        <p>Straße: <span th:text="${order.getCustomer().getAddress().getPostcode()}"></span></p>
+        <p>Straße: <span th:text="${order.getCustomer().getAddress().getTown()}"></span></p>
+        <p>Straße: <span th:text="${order.getCustomer().getAddress().getCountry()}"></span></p>
+        <div class="form-group">
+            <h3>Lieferadresse</h3>
+            <label for="street">Straße:</label>
+            <input type="text" class="form-control" id="street" name="street"/>
+            <label for="number">Hausnummer:</label>
+            <input type="text" class="form-control" id="number" name="number"/>
+            <label for="postcode">Postleitzahl:</label>
+            <input type="text" class="form-control" id="postcode" name="postcode"/>
+            <label for="town">Stadt:</label>
+            <input type="text" class="form-control" id="town" name="town"/>
+            <label for="country">Land:</label>
+            <input type="text" class="form-control" id="country" name="country"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Weiter zur Zahlung</button>
+    </form>
+</div>
+</body>
+</html>

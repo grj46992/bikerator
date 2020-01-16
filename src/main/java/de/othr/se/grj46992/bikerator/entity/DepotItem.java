@@ -15,11 +15,14 @@ public class DepotItem implements Serializable {
     private Item item;
 
     public DepotItem(){
-
     }
 
     public DepotItem(Item item) {
         this.item = item;
+    }
+
+    public Long getDepotItemId() {
+        return depotItemId;
     }
 
     public Item getItem() {

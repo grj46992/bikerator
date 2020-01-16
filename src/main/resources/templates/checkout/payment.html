@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="fragments/head :: bikerator_head" />
+<head>
+    <title>Spring Security Example</title>
+</head>
+<body>
+<div th:replace="fragments/navbar :: bikerator_navbar"></div>
+<div class="container">
+    <p th:if="${paymentError}">Bei Ihrer Zahlung ist leider ein Fehler aufgetreten.</p>
+    <h3>Zahlungsart</h3>
+    <form th:action="@{/checkout/complete}" th:method="post">
+        <h4>Zahlungsservice</h4>
+        <label>Benutzername</label>
+        <input type="text" th:name="username"/>
+        <label>Passwort</label>
+        <input type="password" th:name="password"/>
+        <button type="submit">Zahlungspflichtig bestellen</button>
+    </form>
+</div>
+</body>
+</html>

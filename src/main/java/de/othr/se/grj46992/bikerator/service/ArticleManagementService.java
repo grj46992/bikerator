@@ -33,18 +33,12 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     private String[] categoryOrder = {"Fahrradrahmen", "Fahrradfelgen", "Fahrradreifen", "Fahrradschaltwerke"};
 
     @Override
-    public Iterable<Category> findAllCategories() {
-        Iterable<Category> allCategories = categoryRepository.findAll();
-        return allCategories;
-    }
-
-    @Override
-    public String findFirstCategory() {
+    public String readFirstCategory() {
         return categoryRepository.findByName(this.categoryOrder[0]).getName();
     }
 
     @Override
-    public String findCategoryByIndex(int index) {
+    public String readCategoryByIndex(int index) {
         if (index <= this.categoryOrder.length-1) {
             return categoryRepository.findByName(this.categoryOrder[index]).getName();
         } else {
@@ -53,7 +47,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
-    public int findLastIndexByConfigurationItemList(Configuration currentConfiguration) {
+    public int readLastIndexByConfigurationItemList(Configuration currentConfiguration) {
         List<Item> itemList = currentConfiguration.getItemList();
         for (int i=categoryOrder.length-1 ; i > 0 ; i--) {
             String category = categoryOrder[i];
@@ -67,19 +61,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
-    public Iterable<Item> findAllItems() {
-        Iterable<Item> allItems = itemRepository.findAll();
-        return allItems;
-    }
-
-    @Override
-    public Iterable<ItemPool> findAllItemPools() {
-        Iterable<ItemPool> allItems = itemPoolRepository.findAll();
-        return allItems;
-    }
-
-    @Override
-    public Iterable<Category> findChildCategories(String category) {
+    public Iterable<Category> readChildCategories(String category) {
             Category currentCategory = categoryRepository.findByName(category);
             if (currentCategory.isFather()) {
                 Iterable<Category> children = currentCategory.getChildCategories();
@@ -90,15 +72,29 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
-    public Iterable<Item> findItemsByCategory(String category) {
+    public Iterable<Item> readItemsByCategory(String category) {
         Category current = categoryRepository.findByName(category);
         if (current.isFather()) {
             Collection<Category> children = current.getChildCategories();
-            Iterable<Item> items = itemRepository.findByCategoryIn(children);
+            List<Item> items = itemRepository.findByCategoryIn(children);
+            Iterator iterator = items.iterator();
+            while (iterator.hasNext()) {
+                List<DepotItem> depotItemList = depotItemRepository.findAllByItem((Item)iterator.next());
+                if (depotItemList.isEmpty()) {
+                    iterator.remove();
+                }
+            }
             return items;
         }
         else {
-            Iterable<Item> items = itemRepository.findByCategory(current);
+            List<Item> items = itemRepository.findByCategory(current);
+            Iterator iterator = items.iterator();
+            while (iterator.hasNext()) {
+                List<DepotItem> depotItemList = depotItemRepository.findAllByItem((Item)iterator.next());
+                if (depotItemList.isEmpty()) {
+                    iterator.remove();
+                }
+            }
             return items;
         }
     }
@@ -119,17 +115,12 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
-    public void updateItemPool(ItemPool itemPool) {
-        itemPoolRepository.save(itemPool);
-    }
-
-    @Override
     public void createDepotItem(DepotItem depotItem) {
         depotItemRepository.save(depotItem);
     }
 
     @Override
-    public Iterable<Item> findItemsByItemPoolListAndCategory(List<ItemPool> itemPoolList, String category) {
+    public Iterable<Item> readItemsByItemPoolListAndCategory(List<ItemPool> itemPoolList, String category) {
         List<Item> completeItemList = new ArrayList<Item>();
         Category currentCategory = categoryRepository.findByName(category);
         for (ItemPool itemPool: itemPoolList) {
@@ -138,7 +129,8 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
                 ItemPool currentItemPool = optional.get();
                 Collection<Item> itemList = currentItemPool.getItemList();
                 for (Item item: itemList) {
-                    if (item.getCategory().equals(currentCategory)) {
+                    List<DepotItem> depotItemList = depotItemRepository.findAllByItem(item);
+                    if (item.getCategory().equals(currentCategory) && !depotItemList.isEmpty()) {
                         completeItemList.add(item);
                     }
                 }
@@ -228,7 +220,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
-    public List<ItemPool> findItemPoolListByConfiguration(Configuration configuration, String currentCategory) {
+    public List<ItemPool> readItemPoolListByConfiguration(Configuration configuration, String currentCategory) {
         // TODO besser lösen
         if (currentCategory == "Fahrradreifen") {
             currentCategory = "Fahrradrahmen";
@@ -278,7 +270,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
-    public Configuration findConfigurationById(Long configurationId) {
+    public Configuration readConfigurationById(Long configurationId) {
         Optional<Configuration> optional = configurationRepository.findById(configurationId);
         if (optional.isPresent()) {
             Configuration config = optional.get();
@@ -286,5 +278,22 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
         } else {
             return null;
         }
+    }
+
+    @Override
+    @Transactional
+    public boolean updateDepotItems(Order order) {
+        for (Configuration config: order.getConfigList()) {
+            for (Item item: config.getItemList()) {
+                List<DepotItem> depotItemList = depotItemRepository.findAllByItem(item);
+                if (!depotItemList.isEmpty()) {
+                    DepotItem depotItem = depotItemList.get(0);
+                    depotItemRepository.deleteById(depotItem.getDepotItemId());
+                } else {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

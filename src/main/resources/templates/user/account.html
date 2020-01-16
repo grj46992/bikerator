@@ -6,11 +6,18 @@
 </head>
 <body>
 <div th:replace="fragments/navbar :: bikerator_navbar"></div>
+<p th:if="${saved}">Erfolgreich gespeichert</p>
 <div class="container">
     <h1>Wilkommen <span sec:authentication="name"/>!</h1>
-    <div th:if="${openConfig} != null">
-        <a th:href="@{createConfiguration}">Offene Konfiguration bearbeiten.</a>
+    <div th:if="${openConfig} != null" class="container">
+        <a th:href="@{../createConfiguration}" class="btn btn-primary">Offene Konfiguration bearbeiten.</a>
+    </div>
+    <div class="container">
+        <a th:href="@{/user/editAccount}" class="btn btn-primary">Meine Daten bearbeiten</a>
     </div>
 </div>
+<ul th:each="customer: ${customers}">
+    <li th:text="${customer.getUsername()}"></li>
+</ul>
 </body>
 </html>

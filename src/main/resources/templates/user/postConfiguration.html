@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="fragments/head :: bikerator_head" />
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:replace="fragments/navbar :: bikerator_navbar"></div>
+<div class="container">
+    <div th:object="${config}" class="container">
+        <p>Name: <span th:text="${config.getName()}"></span></p>
+        <p>Beschreibung: <span th:text="${config.getDescription()}"></span></p>
+        <p>Erstellt am: <span th:text="${config.getCreateDate()}"></span></p>
+        <p>Gesamtbetrag: <span th:text="${config.getAmountTotal()}"></span></p>
+        <ul th:each="item: ${config.getItemList()}">
+            <li>
+                <span th:text="${item.getName()}"></span>
+                <span th:text="${item.getPrice()}"></span>
+            </li>
+        </ul>
+    </div>
+    <div class="container">
+        <form th:action="@{/user/sendPost}" th:method="post">
+            <label>Titel</label>
+            <input type="text" th:name="title"/>
+            <label>Text</label>
+            <input type="text" th:name="text"/>
+            <label>Titel</label>
+            <select th:name="picture">
+                <option th:value="true">Mit Bild</option>
+                <option th:value="false">Ohne Bild</option>
+            </select>
+            <p>Zugansdaten bei Friendzone</p>
+            <label>Email</label>
+            <input type="text" th:name="email"/>
+            <label>Passwort</label>
+            <input type="password" th:name="password"/>
+            <button type="submit" class="btn btn-primary">Konfiguration posten</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

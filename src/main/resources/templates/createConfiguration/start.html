@@ -6,7 +6,11 @@
     <title>Title</title>
 </head>
 <div th:replace="fragments/navbar :: bikerator_navbar"></div>
-<div class="container"></div>
+<div th:if="${max}" class="container">
+    <p>Maximale Anzahl an Konfigurationen erreicht. Bitte Löschen Sie eine Konfiguration um fortzufahren.</p>
+    <a class="btn btn-primary" th:href="@{/user/myConfigurations}">Meine Konfigurationen</a>
+</div>
+<div th:unless="${max}" class="container">
     <form th:action="@{/createConfiguration/next}" th:method="post">
         <input type="hidden" th:name="currentCategory" th:value="${currentCategory}"/>
         <ul th:each="elem: ${itemMap}">

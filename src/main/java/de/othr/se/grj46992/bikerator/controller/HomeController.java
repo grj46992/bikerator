@@ -4,19 +4,15 @@ package de.othr.se.grj46992.bikerator.controller;
 import de.othr.se.grj46992.bikerator.entity.*;
 import de.othr.se.grj46992.bikerator.service.ArticleManagementServiceIF;
 import de.othr.se.grj46992.bikerator.service.CustomerManagementServiceIF;
-import org.apache.catalina.session.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpSession;
-import java.security.Principal;
-import java.util.HashMap;
 
 @Controller
-public class IndexController {
+public class HomeController {
 
     @Autowired
     private CustomerManagementServiceIF customerManagementService;
@@ -31,24 +27,6 @@ public class IndexController {
     @RequestMapping("/login")
     public String login() {
         return "login";
-    }
-
-    @RequestMapping("/account")
-    public String account(
-            HttpSession session,
-            Principal principal,
-            Model model
-    ) {
-        Configuration currentConfig = (Configuration) session.getAttribute("configuration");
-        if (currentConfig != null) {
-            model.addAttribute("openConfig", currentConfig);
-        }
-        return "account";
-    }
-
-    @RequestMapping("/logout")
-    public String logout() {
-        return "index";
     }
 
     @RequestMapping("/signup")
@@ -85,23 +63,5 @@ public class IndexController {
         customer.setAddress(address);
         customerManagementService.createCustomer(customer);
         return "login";
-    }
-
-    @RequestMapping("/kategorien")
-    public String listCategories(Model model) {
-        model.addAttribute("categories", articleManagementService.findAllCategories());
-        return "kategorien";
-    }
-
-    @RequestMapping("/artikel")
-    public String listItems(Model model) {
-        model.addAttribute("items", articleManagementService.findAllItems());
-        return "artikel";
-    }
-
-    @RequestMapping("/itempools")
-    public String itempools(Model model) {
-        model.addAttribute("itempools", articleManagementService.findAllItemPools());
-        return "itempools";
     }
 }

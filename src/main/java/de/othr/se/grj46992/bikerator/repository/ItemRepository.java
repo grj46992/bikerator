@@ -7,10 +7,11 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public interface ItemRepository extends CrudRepository<Item, Long> {
-    Iterable<Item> findByCategory(Category category);
-    Iterable<Item> findByCategoryIn(Collection<Category> categories);
+    List<Item> findByCategory(Category category);
+    List<Item> findByCategoryIn(Collection<Category> categories);
     Item findByName(String name);
 }

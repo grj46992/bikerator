@@ -24,8 +24,6 @@ public class Item implements Serializable {
     private List<ItemPool> itemPoolList;
     @OneToMany(mappedBy = "item")
     private List<DepotItem> depotItemList;
-    @ManyToMany(mappedBy = "itemList")
-    private List<Configuration> configurationList;
 
     public Item(){
     }

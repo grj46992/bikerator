@@ -18,7 +18,9 @@
             </ul>
             <p>Gesamtbetrag: <span th:text="${config.getAmountTotal()}"></span></p>
             <a class="btn btn-primary" th:href="@{'/user/editConfiguration?id=' + ${config.getConfigurationId()}}">Bearbeiten</a>
-            <a class="btn btn-primary" th:href="@{/home}">Auf Friendzone posten</a>
+            <a class="btn btn-primary" th:href="@{'/user/deleteConfiguration?id=' + ${config.getConfigurationId()}}">Löschen</a>
+            <a class="btn btn-primary" th:href="@{'/user/postConfiguration?id=' + ${config.getConfigurationId()}}">Auf Friendzone posten</a>
+            <a class="btn btn-primary" th:href="@{'/user/addToOrder?id=' + ${config.getConfigurationId()}}">Zu Warenkorb hinzufügen</a>
         </div>
     </div>
 </div>
