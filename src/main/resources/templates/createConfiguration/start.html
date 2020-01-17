@@ -18,7 +18,7 @@
                 <h3 th:text="${elem.key}"></h3>
                 <ul th:each="item: ${elem.value}">
                     <li>
-                        <input type="radio" th:name="itemId" th:value="${item.itemId}">
+                        <input type="radio" th:name="itemId" th:value="${item.getId()}">
                             <span th:text="${item.name}"></span>
                             <span th:text="${item.description}"></span>
                             <span th:text="${item.price}"></span>

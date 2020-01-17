@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface DepotItemRepository extends CrudRepository<DepotItem, Long> {
-    public List<DepotItem> findAllByItem(Item item);
+    List<DepotItem> findAllByItem(Item item);
 }

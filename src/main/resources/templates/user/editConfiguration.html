@@ -9,7 +9,7 @@
     <div th:replace="fragments/navbar :: bikerator_navbar"></div>
     <div class="container">
         <h1>Edit Configuration</h1>
-        <form th:if="${configExists}" th:action="@{'/user/editConfiguration/save?id=' + ${config.getConfigurationId()}}" th:method="post">
+        <form th:if="${configExists}" th:action="@{'/user/editConfiguration/save?id=' + ${config.getId()}}" th:method="post">
             <div class="form-group">
                 <label th:for="name">Name:</label>
                 <input type="text" class="form-control" th:id="name" th:name="name" th:value="${config.getName()}"/>

@@ -11,8 +11,8 @@
     <h3>Zahlungsart</h3>
     <form th:action="@{/checkout/complete}" th:method="post">
         <h4>Zahlungsservice</h4>
-        <label>Benutzername</label>
-        <input type="text" th:name="username"/>
+        <label>Email Adresse</label>
+        <input type="text" th:name="email"/>
         <label>Passwort</label>
         <input type="password" th:name="password"/>
         <button type="submit">Zahlungspflichtig bestellen</button>

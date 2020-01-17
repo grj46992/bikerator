@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrderRepository extends CrudRepository<Order, Long> {
-    public Order findByCustomer(Customer customer);
+    Order findByCustomer(Customer customer);
 }

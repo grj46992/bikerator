@@ -3,32 +3,25 @@ package de.othr.se.grj46992.bikerator.controller;
 import de.othr.se.grj46992.bikerator.entity.Address;
 import de.othr.se.grj46992.bikerator.entity.Configuration;
 import de.othr.se.grj46992.bikerator.entity.Customer;
-import de.othr.se.grj46992.bikerator.service.ArticleManagementServiceIF;
 import de.othr.se.grj46992.bikerator.service.CustomerManagementServiceIF;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
-import java.util.List;
 
 @Controller
 public class CustomerController {
     @Autowired
     private CustomerManagementServiceIF customerManagementService;
-    @Autowired
-    private ArticleManagementServiceIF articleManagementService;
 
-    @RequestMapping("/user/account")
+    @RequestMapping(value = "/user/account")
     public String account(
             HttpSession session,
-            Principal principal,
             Model model
     ) {
         Configuration currentConfig = (Configuration) session.getAttribute("configuration");
@@ -40,20 +33,18 @@ public class CustomerController {
         return "user/account";
     }
 
-    @RequestMapping("/user/editAccount")
+    @RequestMapping(value = "/user/editAccount")
     public String editCustomer(
-            HttpSession session,
             Principal principal,
             Model model
     ) {
-        Customer user = customerManagementService.readByUsername(principal.getName());
+        Customer user = customerManagementService.readById(principal.getName());
         model.addAttribute("user", user);
         return "user/editAccount";
     }
 
-    @RequestMapping("/user/editAccount/save")
+    @RequestMapping(value = "/user/editAccount/save", method = RequestMethod.POST)
     public String saveCustomer(
-            HttpSession session,
             Principal principal,
             @ModelAttribute("firstname") String firstname,
             @ModelAttribute("lastname") String lastname,
@@ -66,7 +57,7 @@ public class CustomerController {
             @ModelAttribute("email") String email,
             Model model
     ) {
-        Customer customer = customerManagementService.readByUsername(principal.getName());
+        Customer customer = customerManagementService.readById(principal.getName());
         Address customerAddress = customer.getAddress();
 
         customer.setFirstname(firstname);
@@ -85,13 +76,12 @@ public class CustomerController {
         return "user/account";
     }
 
-    @RequestMapping("/user/editAccount/delete")
+    @RequestMapping(value = "/user/editAccount/delete")
     public String deleteCustomer(
             HttpSession session,
-            Principal principal,
-            Model model
+            Principal principal
     ) {
-        Customer customer = customerManagementService.readByUsername(principal.getName());
+        Customer customer = customerManagementService.readById(principal.getName());
         customerManagementService.deleteCustomer(customer);
         session.invalidate();
         return "redirect:/logout";

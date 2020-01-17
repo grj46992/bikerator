@@ -7,8 +7,18 @@
 </head>
 <body>
 <div th:replace="fragments/navbar :: bikerator_navbar"></div>
-<ul th:each="config: ${configs}">
-    <li th:text="${config.getName()}"></li>
-</ul>
+<div class="row">
+    <div class="col-md-4" th:each="father: ${categories}">
+            <h3 th:text="${father.getName()}"></h3>
+            <div class="container" th:each="child: ${father.getChildCategories()}">
+                    <h3 th:text="${child.getName()}"></h3>
+                    <ul th:each="item: ${child.getItemList()}">
+                        <li th:text="${item.getName()}"></li>
+                        <img th:src="@{/images/bike.jpg}"/>
+                    </ul>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

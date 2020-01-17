@@ -8,7 +8,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootApplication
 public class BikeratorApplication implements CommandLineRunner {
@@ -151,6 +150,7 @@ public class BikeratorApplication implements CommandLineRunner {
 
 		// Create Items
 		Item item1 = new Item("Rennradrahmen 1", "beschreibung", 149.99, 15.50, rennradrahmen);
+		item1.setImagePath("C:\\Users\\Johannes\\IdeaProjects\\bikerator\\src\\main\\resources\\static\\images\\bike.jpg");
 		item1.addItemPool(pool1);
 		Item item2 = new Item("Rennradrahmen 2", "beschreibung", 199.99, 15.50, rennradrahmen);
 		item2.addItemPool(pool2);

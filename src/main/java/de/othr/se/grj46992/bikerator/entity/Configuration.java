@@ -9,11 +9,7 @@ import java.util.List;
 
 @Entity
 @Embeddable
-public class Configuration implements Serializable {
-    @Id
-    @NotNull
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long configurationId;
+public class Configuration extends LongIdEntity implements Serializable {
     private String name;
     private String description;
     private Date createDate;
@@ -23,10 +19,6 @@ public class Configuration implements Serializable {
             joinColumns = {@JoinColumn(name = "configurationId")},
             inverseJoinColumns = {@JoinColumn(name = "itemId")})
     private List<Item> itemList = new ArrayList<Item>();
-
-    public Long getConfigurationId() {
-        return configurationId;
-    }
 
     public String getName() {
         return name;
@@ -85,7 +77,7 @@ public class Configuration implements Serializable {
             return false;
         }
         Configuration c = (Configuration) obj;
-        if (c.getConfigurationId() == this.getConfigurationId()) {
+        if (c.getId() == this.getId()) {
             return true;
         }
         return false;

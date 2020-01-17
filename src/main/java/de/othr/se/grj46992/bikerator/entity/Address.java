@@ -7,15 +7,15 @@ import java.io.Serializable;
 
 @Entity
 @Embeddable
-public class Address implements Serializable {
-    @Id
+public class Address extends LongIdEntity implements Serializable {
     @NotNull
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long addressId;
     private String street;
+    @NotNull
     private String number;
+    @NotNull
     private String postcode;
     private String country;
+    @NotNull
     private String town;
 
     public String getTown() {
@@ -24,14 +24,6 @@ public class Address implements Serializable {
 
     public void setTown(String town) {
         this.town = town;
-    }
-
-    public Long getAddressId() {
-        return addressId;
-    }
-
-    public void setAddressId(Long addressId) {
-        this.addressId = addressId;
     }
 
     public String getStreet() {

@@ -2,7 +2,6 @@ package de.othr.se.grj46992.bikerator.service;
 
 import de.othr.se.grj46992.bikerator.entity.*;
 import de.othr.se.grj46992.bikerator.repository.*;
-import org.aspectj.lang.reflect.InterTypeMethodDeclaration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +38,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
 
     @Override
     public String readCategoryByIndex(int index) {
-        if (index <= this.categoryOrder.length-1) {
+        if (index <= this.categoryOrder.length - 1) {
             return categoryRepository.findByName(this.categoryOrder[index]).getName();
         } else {
             return null;
@@ -49,10 +48,10 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     @Override
     public int readLastIndexByConfigurationItemList(Configuration currentConfiguration) {
         List<Item> itemList = currentConfiguration.getItemList();
-        for (int i=categoryOrder.length-1 ; i > 0 ; i--) {
+        for (int i = categoryOrder.length - 1; i > 0; i--) {
             String category = categoryOrder[i];
-            for (Item item: itemList) {
-                if(item.getCategory().getFatherCategory().getName().equals(category)){
+            for (Item item : itemList) {
+                if (item.getCategory().getFatherCategory().getName().equals(category)) {
                     return i;
                 }
             }
@@ -62,13 +61,13 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
 
     @Override
     public Iterable<Category> readChildCategories(String category) {
-            Category currentCategory = categoryRepository.findByName(category);
-            if (currentCategory.isFather()) {
-                Iterable<Category> children = currentCategory.getChildCategories();
-                return children;
-            } else {
-                return null;
-            }
+        Category currentCategory = categoryRepository.findByName(category);
+        if (currentCategory.isFather()) {
+            Iterable<Category> children = currentCategory.getChildCategories();
+            return children;
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -79,18 +78,17 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
             List<Item> items = itemRepository.findByCategoryIn(children);
             Iterator iterator = items.iterator();
             while (iterator.hasNext()) {
-                List<DepotItem> depotItemList = depotItemRepository.findAllByItem((Item)iterator.next());
+                List<DepotItem> depotItemList = depotItemRepository.findAllByItem((Item) iterator.next());
                 if (depotItemList.isEmpty()) {
                     iterator.remove();
                 }
             }
             return items;
-        }
-        else {
+        } else {
             List<Item> items = itemRepository.findByCategory(current);
             Iterator iterator = items.iterator();
             while (iterator.hasNext()) {
-                List<DepotItem> depotItemList = depotItemRepository.findAllByItem((Item)iterator.next());
+                List<DepotItem> depotItemList = depotItemRepository.findAllByItem((Item) iterator.next());
                 if (depotItemList.isEmpty()) {
                     iterator.remove();
                 }
@@ -102,6 +100,11 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     @Override
     public void createCategory(Category category) {
         categoryRepository.save(category);
+    }
+
+    @Override
+    public Iterable<Category> readFatherCategories() {
+        return categoryRepository.findByFatherCategory(null);
     }
 
     @Override
@@ -123,12 +126,12 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     public Iterable<Item> readItemsByItemPoolListAndCategory(List<ItemPool> itemPoolList, String category) {
         List<Item> completeItemList = new ArrayList<Item>();
         Category currentCategory = categoryRepository.findByName(category);
-        for (ItemPool itemPool: itemPoolList) {
-            Optional<ItemPool> optional = itemPoolRepository.findById(itemPool.getItemPoolId());
+        for (ItemPool itemPool : itemPoolList) {
+            Optional<ItemPool> optional = itemPoolRepository.findById(itemPool.getId());
             if (optional.isPresent()) {
                 ItemPool currentItemPool = optional.get();
                 Collection<Item> itemList = currentItemPool.getItemList();
-                for (Item item: itemList) {
+                for (Item item : itemList) {
                     List<DepotItem> depotItemList = depotItemRepository.findAllByItem(item);
                     if (item.getCategory().equals(currentCategory) && !depotItemList.isEmpty()) {
                         completeItemList.add(item);
@@ -140,7 +143,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
-    public Configuration updateConfigurationItemListAddItem(Configuration currentConfig, Long itemId){
+    public Configuration updateConfigurationItemListAddItem(Configuration currentConfig, Long itemId) {
         Optional<Item> optional = itemRepository.findById(itemId);
         // Check if item exists
         if (optional.isPresent()) {
@@ -173,13 +176,12 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
             }
             // Update AmountTotal
             Double newAmountTotal = 0.0;
-            for (Item item: itemList) {
+            for (Item item : itemList) {
                 newAmountTotal += item.getPrice();
             }
             currentConfig.setAmountTotal(newAmountTotal);
             return currentConfig;
-        }
-        else {
+        } else {
             return currentConfig;
         }
     }
@@ -206,7 +208,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
         }
         // Update AmountTotal
         Double newAmountTotal = 0.0;
-        for (Item item: itemList) {
+        for (Item item : itemList) {
             newAmountTotal += item.getPrice();
         }
         currentConfig.setAmountTotal(newAmountTotal);
@@ -216,7 +218,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     @Override
     public Long updateConfiguration(Configuration configuration) {
         Configuration updatedConfig = configurationRepository.save(configuration);
-        return updatedConfig.getConfigurationId();
+        return updatedConfig.getId();
     }
 
     @Override
@@ -229,7 +231,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
             return null;
         } else {
             List<Item> itemList = configuration.getItemList();
-            for (Item item: itemList) {
+            for (Item item : itemList) {
                 if (item.getCategory().getFatherCategory() != null) {
                     if (item.getCategory().getFatherCategory().getName().equals(currentCategory)) {
                         return item.getItemPoolList();
@@ -247,7 +249,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     @Override
     public Long createConfiguration(Configuration configuration) {
         Configuration newConf = configurationRepository.save(configuration);
-        return newConf.getConfigurationId();
+        return newConf.getId();
     }
 
     @Transactional
@@ -261,10 +263,10 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
             if (configList.contains(configuration)) {
                 if (configList.remove(configuration)) {
                     customerRepository.save(user);
-                    configurationRepository.deleteById(configuration.getConfigurationId());
+                    configurationRepository.deleteById(configuration.getId());
                 }
             } else {
-                configurationRepository.deleteById(configuration.getConfigurationId());
+                configurationRepository.deleteById(configuration.getId());
             }
         }
     }
@@ -283,12 +285,12 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     @Override
     @Transactional
     public boolean updateDepotItems(Order order) {
-        for (Configuration config: order.getConfigList()) {
-            for (Item item: config.getItemList()) {
+        for (Configuration config : order.getConfigList()) {
+            for (Item item : config.getItemList()) {
                 List<DepotItem> depotItemList = depotItemRepository.findAllByItem(item);
                 if (!depotItemList.isEmpty()) {
                     DepotItem depotItem = depotItemList.get(0);
-                    depotItemRepository.deleteById(depotItem.getDepotItemId());
+                    depotItemRepository.deleteById(depotItem.getId());
                 } else {
                     return false;
                 }

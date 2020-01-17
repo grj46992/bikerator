@@ -8,24 +8,12 @@ import java.util.List;
 
 @Entity
 @Embeddable
-public class ItemPool implements Serializable {
-    @Id
-    @NotNull
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long itemPoolId;
+public class ItemPool extends LongIdEntity implements Serializable {
     @ManyToMany(mappedBy = "itemPoolList")
     private List<Item> itemList;
 
     public ItemPool() {
         this.itemList = new ArrayList<Item>();
-    }
-
-    public Long getItemPoolId() {
-        return itemPoolId;
-    }
-
-    public void setItemPoolId(Long itemPoolId) {
-        this.itemPoolId = itemPoolId;
     }
 
     public List<Item> getItemList() {

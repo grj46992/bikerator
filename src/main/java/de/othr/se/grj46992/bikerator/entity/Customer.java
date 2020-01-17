@@ -14,15 +14,17 @@ import java.util.List;
 
 @Entity
 @Embeddable
-public class Customer implements Serializable, UserDetails {
-    @Id
+public class Customer extends StringIdEntity implements Serializable, UserDetails {
     @NotNull
-    private String username;
     private String firstname;
+    @NotNull
     private String lastname;
+    @NotNull
     private String email;
+    @NotNull
     private String password;
     @ElementCollection
+    @NotNull
     @OneToOne
     private Address address;
     @OneToOne
@@ -32,15 +34,9 @@ public class Customer implements Serializable, UserDetails {
     @OneToMany(cascade = CascadeType.REMOVE)
     private List<Configuration> configList = new ArrayList<Configuration>();
 
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -54,7 +50,7 @@ public class Customer implements Serializable, UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return this.getId();
     }
 
     @Override

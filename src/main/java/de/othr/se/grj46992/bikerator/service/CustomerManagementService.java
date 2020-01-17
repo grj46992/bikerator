@@ -1,6 +1,5 @@
 package de.othr.se.grj46992.bikerator.service;
 
-import de.othr.se.grj46992.bikerator.entity.Address;
 import de.othr.se.grj46992.bikerator.entity.Configuration;
 import de.othr.se.grj46992.bikerator.entity.Customer;
 import de.othr.se.grj46992.bikerator.entity.Order;
@@ -39,15 +38,15 @@ public class CustomerManagementService implements CustomerManagementServiceIF, U
     }
 
     @Override
-    public void  updateCustomer(Customer customer) {
+    public void updateCustomer(Customer customer) {
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         addressRepository.save(customer.getAddress());
         customerRepository.save(customer);
     }
 
     @Override
-    public void  deleteCustomer(Customer customer) {
-        Long addressId = customer.getAddress().getAddressId();
+    public void deleteCustomer(Customer customer) {
+        Long addressId = customer.getAddress().getId();
         customerRepository.deleteById(customer.getUsername());
         addressRepository.deleteById(addressId);
     }
@@ -62,26 +61,20 @@ public class CustomerManagementService implements CustomerManagementServiceIF, U
     public List<String> readCustomerEmailList() {
         List<String> customerEmailList = new ArrayList<String>();
         Iterable<Customer> allCustomers = customerRepository.findAll();
-        for (Customer customer: allCustomers) {
+        for (Customer customer : allCustomers) {
             customerEmailList.add(customer.getEmail());
         }
         return customerEmailList;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Customer customer = customerRepository.findByUsername(username);
-        if (customer == null) {
-            throw new UsernameNotFoundException("Kunde mit Namen " + username + " existiert nicht" );
-        } else {
+    public Customer readById(String username) {
+        Optional<Customer> optional = customerRepository.findById(username);
+        if (optional.isPresent()) {
+            Customer customer = optional.get();
             return customer;
         }
-    }
-
-    @Override
-    public Customer readByUsername(String username) {
-        Customer user = customerRepository.findByUsername(username);
-        return user;
+        return null;
     }
 
     @Override
@@ -100,9 +93,21 @@ public class CustomerManagementService implements CustomerManagementServiceIF, U
         customer.addOrderToCompletedOrderList(order);
         customerRepository.save(customer);
     }
+
     @Override
     public void deleteCurrentOrder(Customer customer) {
         customer.setCurrentOrder(null);
         customerRepository.save(customer);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<Customer> optional = customerRepository.findById(username);
+        if (optional.isPresent()) {
+            Customer customer = optional.get();
+            return customer;
+        } else {
+            throw new UsernameNotFoundException("Kunde mit Namen " + username + " existiert nicht");
+        }
     }
 }

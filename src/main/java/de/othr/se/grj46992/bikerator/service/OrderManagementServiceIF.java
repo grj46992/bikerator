@@ -6,9 +6,13 @@ import de.othr.se.grj46992.bikerator.entity.Order;
 
 public interface OrderManagementServiceIF {
 
-    public Order createOrder(Customer customer);
-    public Order updateOrderAddConfiguration(Order order, Configuration configuration);
-    public Order updateOrderComplete(Order order);
-    public Order readOrderByCustomer(Customer customer);
-    public boolean createPayment(String username, String password, Order order);
+    Order createOrder(Customer customer);
+
+    Order updateOrderAddConfiguration(Order order, Configuration configuration);
+
+    Order updateOrderComplete(Order order);
+
+    Order readOrderByCustomer(Customer customer);
+
+    boolean createTransaction(String username, String password, Order order);
 }

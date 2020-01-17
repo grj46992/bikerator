@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
@@ -19,20 +20,19 @@ import java.util.List;
 @Controller
 public class ConfigurationController {
 
+    private static final int MAX_NUMBER_OF_CONFIGURATIONS = 6;
     @Autowired
     private CustomerManagementServiceIF customerManagementService;
     @Autowired
     private ArticleManagementServiceIF articleManagementService;
 
-    private static final int MAX_NUMBER_OF_CONFIGURATIONS = 6;
-
-    @RequestMapping("/createConfiguration/start")
+    @RequestMapping(value = "/createConfiguration/start")
     public String createConfigurationStart(
             HttpSession session,
             Principal principal,
             Model model
     ) {
-        if (principal != null && customerManagementService.readByUsername(principal.getName()).getConfigList().size() >= MAX_NUMBER_OF_CONFIGURATIONS) {
+        if (principal != null && customerManagementService.readById(principal.getName()).getConfigList().size() >= MAX_NUMBER_OF_CONFIGURATIONS) {
             model.addAttribute("max", true);
             return "createConfiguration/start";
         } else {
@@ -42,7 +42,7 @@ public class ConfigurationController {
             //Load Categories and Items
             Iterable<Category> children = articleManagementService.readChildCategories(articleManagementService.readFirstCategory());
             HashMap<String, Iterable<Item>> itemMap = new HashMap<String, Iterable<Item>>();
-            for (Category c: children) {
+            for (Category c : children) {
                 itemMap.put(c.getName(), articleManagementService.readItemsByCategory(c.getName()));
             }
             model.addAttribute("itemMap", itemMap);
@@ -51,13 +51,12 @@ public class ConfigurationController {
         }
     }
 
-    @RequestMapping("/createConfiguration")
+    @RequestMapping(value = "/createConfiguration")
     public String createConfiguration(
             HttpSession session,
-            Principal principal,
             Model model
     ) {
-//TODO implement ItemIsAvailable function
+
         //Create Configuration in Session if not exists
         Configuration currentConfig = (Configuration) session.getAttribute("configuration");
 
@@ -84,12 +83,11 @@ public class ConfigurationController {
         }
     }
 
-    @RequestMapping("/createConfiguration/next")
+    @RequestMapping(value = "/createConfiguration/next", method = RequestMethod.POST)
     public String createConfigurationNext(
             @ModelAttribute("itemId") Long itemId,
             @ModelAttribute("currentCategory") int currentCategoryIndex,
             HttpSession session,
-            Principal principal,
             Model model
     ) {
 
@@ -124,11 +122,10 @@ public class ConfigurationController {
         }
     }
 
-    @RequestMapping("/createConfiguration/back")
+    @RequestMapping(value = "/createConfiguration/back", method = RequestMethod.POST)
     public String createConfigurationBack(
             @ModelAttribute("currentCategory") int currentCategoryIndex,
             HttpSession session,
-            Principal principal,
             Model model
     ) {
 
@@ -141,7 +138,7 @@ public class ConfigurationController {
             //Load Categories and Items
             Iterable<Category> children = articleManagementService.readChildCategories(articleManagementService.readFirstCategory());
             HashMap<String, Iterable<Item>> itemMap = new HashMap<String, Iterable<Item>>();
-            for (Category c: children) {
+            for (Category c : children) {
                 itemMap.put(c.getName(), articleManagementService.readItemsByCategory(c.getName()));
             }
             model.addAttribute("itemMap", itemMap);
@@ -172,17 +169,16 @@ public class ConfigurationController {
         }
     }
 
-    @RequestMapping("/createConfiguration/complete")
+    @RequestMapping(value = "/createConfiguration/complete")
     public String createConfigurationComplete(
             HttpSession session,
-            Principal principal,
             Model model
     ) {
         model.addAttribute("config", session.getAttribute("configuration"));
         return "createConfiguration/complete";
     }
 
-    @RequestMapping("/user/editConfiguration/save")
+    @RequestMapping(value = "/user/editConfiguration/save", method = RequestMethod.POST)
     public String createConfigurationSave(
             @ModelAttribute("name") String name,
             @ModelAttribute("beschreibung") String description,
@@ -191,7 +187,7 @@ public class ConfigurationController {
             Principal principal,
             Model model
     ) {
-        Customer user = customerManagementService.readByUsername(principal.getName());
+        Customer user = customerManagementService.readById(principal.getName());
         Configuration currentConfig;
         Long configurationId;
         if (configId != null) {
@@ -220,14 +216,12 @@ public class ConfigurationController {
         return "user/myConfigurations";
     }
 
-    @RequestMapping("/user/editConfiguration")
+    @RequestMapping(value = "/user/editConfiguration", method = RequestMethod.GET)
     public String editConfigurations(
             @RequestParam(required = false, name = "id") Long configId,
             HttpSession session,
-            Principal principal,
             Model model
     ) {
-
         Configuration currentConfig = (Configuration) session.getAttribute("configuration");
         if (configId != null) {
             currentConfig = articleManagementService.readConfigurationById(configId);
@@ -237,14 +231,13 @@ public class ConfigurationController {
         return "user/editConfiguration";
     }
 
-    @RequestMapping("/user/deleteConfiguration")
+    @RequestMapping(value = "/user/deleteConfiguration", method = RequestMethod.GET)
     public String deleteConfigurations(
             @RequestParam(required = false, name = "id") Long configId,
-            HttpSession session,
             Principal principal,
             Model model
     ) {
-        Customer user = customerManagementService.readByUsername(principal.getName());
+        Customer user = customerManagementService.readById(principal.getName());
         Configuration currentConfig = articleManagementService.readConfigurationById(configId);
         articleManagementService.deleteConfiguration(currentConfig, user);
         model.addAttribute("user", user);
@@ -252,30 +245,28 @@ public class ConfigurationController {
         return "user/myConfigurations";
     }
 
-    @RequestMapping("/user/myConfigurations")
+    @RequestMapping(value = "/user/myConfigurations")
     public String myConfigurations(
-            @RequestParam(required = false, name = "id") Long configId,
-            HttpSession session,
             Principal principal,
             Model model
     ) {
-        Customer user = customerManagementService.readByUsername(principal.getName());
+        Customer user = customerManagementService.readById(principal.getName());
         model.addAttribute("user", user);
-        model.addAttribute("configList",  user.getConfigList());
+        model.addAttribute("configList", user.getConfigList());
         return "user/myConfigurations";
     }
 
-    @RequestMapping("/user/postConfiguration")
+    @RequestMapping(value = "/user/postConfiguration", method = RequestMethod.GET)
     public String postConfiguration(
             @RequestParam(required = false, name = "id") Long configId,
             Model model
     ) {
         Configuration currentConfig = articleManagementService.readConfigurationById(configId);
-        model.addAttribute("config",  currentConfig);
+        model.addAttribute("config", currentConfig);
         return "user/postConfiguration";
     }
 
-    @RequestMapping("/user/sendPost")
+    @RequestMapping(value = "/user/sendPost", method = RequestMethod.POST)
     public String sendPost(
             @ModelAttribute("title") String title,
             @ModelAttribute("text") String text,

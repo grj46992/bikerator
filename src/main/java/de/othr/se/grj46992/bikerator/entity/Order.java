@@ -9,30 +9,21 @@ import java.util.List;
 
 @Entity
 @Table(name="`Order`")
-public class Order implements Serializable {
-    @Id
-    @NotNull
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long orderId;
+public class Order extends LongIdEntity implements Serializable {
     private Double amountOrder = 0.0;
     private Date orderDate;
     private Boolean completed = false;
+    @NotNull
     @ManyToOne
     private Address shippingAddress;
+    @NotNull
     @ManyToOne
     private Address billingAddress;
+    @NotNull
     @OneToOne
     private Customer customer;
     @ManyToMany(cascade = CascadeType.REMOVE)
     private List<Configuration> configList = new ArrayList<Configuration>();
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
 
     public Double getAmountOrder() {
         return amountOrder;

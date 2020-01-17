@@ -8,11 +8,7 @@ import java.util.List;
 
 @Entity
 @Embeddable
-public class Item implements Serializable {
-    @Id
-    @NotNull
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long itemId;
+public class Item extends LongIdEntity implements Serializable {
     private String name;
     private String description;
     private Double price;
@@ -35,14 +31,6 @@ public class Item implements Serializable {
         this.weight = weight;
         this.category = category;
         this.itemPoolList = new ArrayList<ItemPool>();
-    }
-
-    public Long getItemId() {
-        return itemId;
-    }
-
-    public void setItemId(Long itemId) {
-        this.itemId = itemId;
     }
 
     public String getName() {

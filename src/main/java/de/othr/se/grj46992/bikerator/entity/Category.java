@@ -7,11 +7,7 @@ import java.util.List;
 
 @Entity
 @Embeddable
-public class Category implements Serializable {
-    @Id
-    @NotNull
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long categoryId;
+public class Category extends LongIdEntity implements Serializable {
     private String name;
     private String description;
     private String  imagePath;
@@ -21,14 +17,6 @@ public class Category implements Serializable {
     private Category fatherCategory;
     @OneToMany(mappedBy = "fatherCategory")
     private List<Category> childCategories;
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
 
     public String getName() {
         return name;
@@ -71,21 +59,6 @@ public class Category implements Serializable {
             return false;
         }
         else return true;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj == null || obj.getClass() != this.getClass()) {
-            return false;
-        }
-        Category c = (Category) obj;
-        if (c.getCategoryId() == this.getCategoryId()) {
-            return true;
-        }
-        return false;
     }
 
     public void setFatherCategory(Category fatherCategory) {

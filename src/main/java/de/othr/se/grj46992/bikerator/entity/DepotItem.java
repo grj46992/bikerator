@@ -6,11 +6,7 @@ import java.io.Serializable;
 
 @Entity
 @Embeddable
-public class DepotItem implements Serializable {
-    @Id
-    @NotNull
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long depotItemId;
+public class DepotItem extends LongIdEntity implements Serializable {
     @ManyToOne
     private Item item;
 
@@ -19,10 +15,6 @@ public class DepotItem implements Serializable {
 
     public DepotItem(Item item) {
         this.item = item;
-    }
-
-    public Long getDepotItemId() {
-        return depotItemId;
     }
 
     public Item getItem() {
