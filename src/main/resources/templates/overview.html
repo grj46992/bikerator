@@ -3,22 +3,40 @@
 <head th:replace="fragments/head :: bikerator_head" />
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Artikelübersicht</title>
 </head>
-<body>
-<div th:replace="fragments/navbar :: bikerator_navbar"></div>
-<div class="row">
-    <div class="col-md-4" th:each="father: ${categories}">
-            <h3 th:text="${father.getName()}"></h3>
-            <div class="container" th:each="child: ${father.getChildCategories()}">
-                    <h3 th:text="${child.getName()}"></h3>
-                    <ul th:each="item: ${child.getItemList()}">
-                        <li th:text="${item.getName()}"></li>
-                        <img th:src="@{/images/bike.jpg}"/>
-                    </ul>
+    <body>
+        <div th:replace="fragments/navbar :: bikerator_navbar"></div>
+        <div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px;">
+            <div class="container">
+                <div th:each="father: ${categories}">
+                    <h3 th:text="${father.getName()}" style="margin-bottom: 50px;"></h3>
+                    <div class="container">
+                        <div th:each="child: ${father.getChildCategories()}">
+                            <h4 th:text="${child.getName()}" style="margin-bottom: 20px;"></h4>
+                            <div th:each="item: ${child.getItemList()}" class="row" style="margin: 30px 0px; border: 1px solid rgb(189, 189, 189); ">
+                                <div class="col-lg-4 col-md-12">
+                                    <img th:src="@{/images/bike.jpg}" style="width: 80%;"/>
+                                </div>
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-4 col-md-6" style="padding: 30px;">
+                                    <h4 th:text="${item.name}"></h4>
+                                    <p>Artikelnummer: <span th:text="${item.getId()}"></span></p>
+                                    <p th:text="${item.description}"></p>
+                                    <span>Lagerbestand: <span th:text="${item.getStock()}"></span></span><br/>
+                                    <span>Gewicht: <span th:text="${item.getWeight()}"></span> Kg</span><br/>
+                                    <span>Kategorie: <span th:text="${item.getCategory().getName()}"></span></span>
+                                </div>
+                                <div class="col-lg-3 col-md-6" style="padding: 30px;">
+                                    <div class="container" style="position: absolute; bottom: 10%;">
+                                        <h3 th:text="${item.price} + ' €'"></h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-</body>
+    </body>
 </html>

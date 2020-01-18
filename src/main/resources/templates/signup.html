@@ -1,50 +1,95 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<head th:replace="fragments/head :: bikerator_head" />
-<head>
-    <meta charset="UTF-8">
-    <title>Registrierung</title>
-</head>
-<body>
-<div th:replace="fragments/navbar :: bikerator_navbar"></div>
-<h1>Registrierung</h1>
-<div class="container">
-    <form th:action="@{/register}" th:method="post">
-        <div class="form-group">
-            <label for="firstname">Vorname:</label>
-            <input type="text" class="form-control" id="firstname" name="firstname">
+    <head th:replace="fragments/head :: bikerator_head" />
+    <head>
+        <meta charset="UTF-8">
+        <title>Registrierung</title>
+    </head>
+    <body>
+        <div th:replace="fragments/navbar :: bikerator_navbar"></div>
+        <div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px;">
+            <div class="container">
+                <h3>Registrierung</h3>
+                <form id="registerForm" th:action="@{/register}" th:method="post" style="padding: 20px;">
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label>Vorname</label>
+                            <input type="text" class="form-control" name="firstname" required/>
+                        </div>
+                        <div class="form-group col-6">
+                            <label>Nachname</label>
+                            <input type="text" class="form-control" name="lastname" required/>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label>Straße</label>
+                            <input type="text" class="form-control" name="street" required/>
+                        </div>
+                        <div class="form-group col-6">
+                            <label>Hausnummer</label>
+                            <input type="text" class="form-control" name="number" required/>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-4">
+                            <label>Postleitzahl</label>
+                            <input type="text" class="form-control" name="postcode" required/>
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Stadt</label>
+                            <input type="text" class="form-control" name="town" required/>
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Land</label>
+                            <input type="text" class="form-control" name="country" required/>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label>Benutzername</label>
+                        <input type="text" class="form-control" name="username" required/>
+                    </div>
+                    <div class="form-group">
+                        <label>Passwort</label>
+                        <input type="password" class="form-control" name="password" required/>
+                    </div>
+                    <div class="form-group">
+                        <label>Passwort wiederholen</label>
+                        <input type="password" class="form-control" name="passwordCheck" required/>
+                    </div>
+                    <div class="form-group">
+                        <label>E-Mail Adresse</label>
+                        <input type="text" class="form-control" name="email" required/>
+                    </div>
+                    <button type="submit" class="btn btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px;">Registrieren</button>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="lastname">Nachname:</label>
-            <input type="text" class="form-control" id="lastname" name="lastname">
-        </div>
-        <div class="form-group">
-            <p>Adresse</p>
-            <label for="street">Straße:</label>
-            <input type="text" class="form-control" id="street" name="street">
-            <label for="number">Hausnummer:</label>
-            <input type="text" class="form-control" id="number" name="number">
-            <label for="postcode">Postleitzahl:</label>
-            <input type="text" class="form-control" id="postcode" name="postcode">
-            <label for="town">Stadt:</label>
-            <input type="text" class="form-control" id="town" name="town">
-            <label for="country">Land:</label>
-            <input type="text" class="form-control" id="country" name="country">
-        </div>
-        <div class="form-group">
-            <label for="username">Benutzername:</label>
-            <input type="text" class="form-control" id="username" name="username">
-        </div>
-        <div class="form-group">
-            <label for="password">Passwort:</label>
-            <input type="password" class="form-control" id="password" name="password">
-        </div>
-        <div class="form-group">
-            <label for="email">Email-Adresse:</label>
-            <input type="text" class="form-control" id="email" name="email">
-        </div>
-        <button type="submit" class="btn btn-primary">Registrieren</button>
-    </form>
-</div>
-</body>
+    </body>
 </html>
+
+<style type="text/css">
+    .form-control:focus {
+        border-color: rgba(0, 0, 0, 0.2);
+        box-shadow: 0 0 0 0.1rem rgba(0, 0, 0, 0.2);
+    }
+    footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        background-color: white;
+    }
+</style>
+
+<script type="application/javascript">
+    $("#registerForm").submit(function(event) {
+        var password = $("input[name=password]").val();
+        var passwordCheck = $("input[name=passwordCheck]").val();
+        if (password !== passwordCheck) {
+            alert("Die eingegebenen Passwörter stimmen nicht überein.");
+            event.preventDefault();
+        }
+    });
+</script>

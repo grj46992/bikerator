@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class HomeController {
@@ -24,8 +25,15 @@ public class HomeController {
         return "index";
     }
 
-    @RequestMapping(value = "/login")
-    public String login() {
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String login(
+            @RequestParam(required=false) String error,
+            Model model
+    ) {
+        if (error != null) {
+            model.addAttribute("error", true);
+            return "login";
+        }
         return "login";
     }
 
@@ -53,8 +61,8 @@ public class HomeController {
             @ModelAttribute("country") String country,
             @ModelAttribute("username") String username,
             @ModelAttribute("password") String password,
-            @ModelAttribute("email") String email,
-            Model model
+            @ModelAttribute("passwordCheck") String passwordCheck,
+            @ModelAttribute("email") String email
     ) {
         Customer customer = new Customer();
         customer.setFirstname(firstname);

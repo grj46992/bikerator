@@ -2,22 +2,40 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head th:replace="fragments/head :: bikerator_head" />
 <head>
-    <title>Spring Security Example</title>
+    <meta charset="UTF-8">
+    <title>Mein Konto</title>
 </head>
-<body>
-<div th:replace="fragments/navbar :: bikerator_navbar"></div>
-<p th:if="${saved}">Erfolgreich gespeichert</p>
-<div class="container">
-    <h1>Wilkommen <span sec:authentication="name"/>!</h1>
-    <div th:if="${openConfig} != null" class="container">
-        <a th:href="@{../createConfiguration}" class="btn btn-primary">Offene Konfiguration bearbeiten.</a>
-    </div>
-    <div class="container">
-        <a th:href="@{/user/editAccount}" class="btn btn-primary">Meine Daten bearbeiten</a>
-    </div>
-</div>
-<ul th:each="customer: ${customers}">
-    <li th:text="${customer.getUsername()}"></li>
-</ul>
-</body>
+    <body>
+        <div th:replace="fragments/navbar :: bikerator_navbar"></div>
+        <div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px;">
+            <div class="container">
+                <div  th:if="${saved}"class="alert alert-success" role="alert">
+                    Die Änderungen wurden erfolgreich gespeichert.
+                </div>
+                <h3>Hallo <span sec:authentication="name"/>! Wilkommen im Bikerator.</h3>
+                <div class="container row">
+                    <div th:if="${openConfig} != null" class="col-12">
+                        <a th:href="@{../createConfiguration}" class="btn btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px; width: 340px;">Offene Konfiguration bearbeiten</a>
+                    </div>
+                    <div class="col-12">
+                        <a th:href="@{../createConfiguration/start}" class="btn btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px; width: 340px;">Neue Konfiguration starten</a>
+                    </div>
+                    <div class="col-12">
+                        <a th:href="@{/user/myConfigurations}" class="btn btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px; width: 340px;">Gespeicherte Konfigurationen ansehen</a>
+                    </div>
+                    <div class="col-12">
+                        <a th:href="@{/user/editAccount}" class="btn btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px; width: 340px;">Meine Daten bearbeiten</a>
+                    </div>
+                    <div class="col-12">
+                        <a th:href="@{/user/editAccount/password}" class="btn btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px; width: 340px;">Passwort ändern</a>
+                    </div>
+                    <div class="col-12">
+                        <form th:action="@{/user/editAccount/delete}" th:method="post" onSubmit="return confirm('Konto wirklich löschen?');">
+                            <button type="submit" class="btn btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px; width: 340px;">Konto löschen</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>

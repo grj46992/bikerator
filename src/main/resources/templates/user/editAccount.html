@@ -3,49 +3,55 @@
 <head th:replace="fragments/head :: bikerator_head" />
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Mein Konto</title>
 </head>
-<body>
-<div th:replace="fragments/navbar :: bikerator_navbar"></div>
-<div class="container">
-    <h1>Meine Daten</h1>
-    <form th:action="@{/user/editAccount/save}" th:method="post">
-        <div class="form-group">
-            <label for="firstname">Vorname:</label>
-            <input type="text" class="form-control" id="firstname" name="firstname" th:value="${user.getFirstname()}">
+    <body>
+        <div th:replace="fragments/navbar :: bikerator_navbar"></div>
+        <div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px;">
+            <div class="container">
+            <h1>Meine Daten</h1>
+                <form th:action="@{/user/editAccount/save}" th:method="post" style="padding: 20px;">
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label>Vorname</label>
+                            <input type="text" class="form-control" name="firstname" th:value="${user.getFirstname()}"/>
+                        </div>
+                        <div class="form-group col-6">
+                            <label>Nachname</label>
+                            <input type="text" class="form-control" name="lastname" th:value="${user.getLastname()}"/>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label>Straße</label>
+                            <input type="text" class="form-control" name="street" th:value="${user.getAddress().getStreet()}"/>
+                        </div>
+                        <div class="form-group col-6">
+                            <label>Hausnummer</label>
+                            <input type="text" class="form-control" name="number" th:value="${user.getAddress().getNumber()}"/>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-4">
+                            <label>Postleitzahl</label>
+                            <input type="text" class="form-control" name="postcode" th:value="${user.getAddress().getPostcode()}"/>
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Stadt</label>
+                            <input type="text" class="form-control" name="town" th:value="${user.getAddress().getTown()}"/>
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Land</label>
+                            <input type="text" class="form-control" name="country" th:value="${user.getAddress().getCountry()}"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>E-Mail Adresse</label>
+                        <input type="text" class="form-control" name="email" th:value="${user.getEmail()}"/>
+                    </div>
+                    <button type="submit" class="btn btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px;">Änderungen speichern</button>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="lastname">Nachname:</label>
-            <input type="text" class="form-control" id="lastname" name="lastname" th:value="${user.getLastname()}">
-        </div>
-        <div class="form-group">
-            <p>Adresse</p>
-            <label for="street">Straße:</label>
-            <input type="text" class="form-control" id="street" name="street" th:value="${user.getAddress().getStreet()}">
-            <label for="number">Hausnummer:</label>
-            <input type="text" class="form-control" id="number" name="number" th:value="${user.getAddress().getNumber()}">
-            <label for="postcode">Postleitzahl:</label>
-            <input type="text" class="form-control" id="postcode" name="postcode" th:value="${user.getAddress().getPostcode()}">
-            <label for="town">Stadt:</label>
-            <input type="text" class="form-control" id="town" name="town" th:value="${user.getAddress().getTown()}">
-            <label for="country">Land:</label>
-            <input type="text" class="form-control" id="country" name="country" th:value="${user.getAddress().getCountry()}">
-        </div>
-        <div class="form-group">
-            <label>Neues Passwort:</label>
-            <input type="password" class="form-control" name="password">
-            <label>Passwort bestätigen:</label>
-            <input type="password" class="form-control" name="password_confirm">
-        </div>
-        <div class="form-group">
-            <label for="email">Email-Adresse:</label>
-            <input type="text" class="form-control" id="email" name="email" th:value="${user.getEmail()}">
-        </div>
-        <button type="submit" class="btn btn-primary">Änderungen speichern</button>
-    </form>
-    <form th:action="@{/user/editAccount/delete}" th:method="post">
-        <button type="submit" class="btn btn-primary">Account löschen</button>
-    </form>
-</div>
-</body>
+    </body>
 </html>

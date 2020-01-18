@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
@@ -25,7 +26,7 @@ public class CustomerController {
             Model model
     ) {
         Configuration currentConfig = (Configuration) session.getAttribute("configuration");
-        if (currentConfig != null) {
+        if (currentConfig != null && !currentConfig.getItemList().isEmpty()) {
             model.addAttribute("openConfig", currentConfig);
         }
         Iterable<Customer> list = customerManagementService.readAllCustomers();
@@ -53,7 +54,6 @@ public class CustomerController {
             @ModelAttribute("postcode") String postcode,
             @ModelAttribute("town") String town,
             @ModelAttribute("country") String country,
-            @ModelAttribute("password") String password,
             @ModelAttribute("email") String email,
             Model model
     ) {
@@ -62,7 +62,6 @@ public class CustomerController {
 
         customer.setFirstname(firstname);
         customer.setLastname(lastname);
-        customer.setPassword(password);
         customer.setEmail(email);
         customerAddress.setStreet(street);
         customerAddress.setNumber(number);
@@ -72,6 +71,24 @@ public class CustomerController {
         customer.setAddress(customerAddress);
         customerManagementService.updateCustomer(customer);
 
+        model.addAttribute("saved", true);
+        return "user/account";
+    }
+
+    @RequestMapping(value = "/user/editAccount/password")
+    public String editPassword() {
+        return "user/editPassword";
+    }
+
+    @RequestMapping(value = "/user/editAccount/savePassword", method = RequestMethod.POST)
+    public String editPassword(
+            @RequestParam(required = false, name="passwordNew") String passwordNew,
+            Principal principal,
+            Model model
+    ) {
+        Customer customer = customerManagementService.readById(principal.getName());
+        customer.setPassword(passwordNew);
+        customerManagementService.updateCustomer(customer);
         model.addAttribute("saved", true);
         return "user/account";
     }
