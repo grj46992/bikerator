@@ -1,38 +1,93 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<head th:replace="fragments/head :: bikerator_head" />
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/head :: bikerator_head"/>
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Meine Bestellung</title>
 </head>
 <body>
 <div th:replace="fragments/navbar :: bikerator_navbar"></div>
-<div class="container" th:object="${order}">
-    <h1>Meine Bestellung</h1>
-    <p>Ihre Bestellung umfasst <span th:text="${order.getConfigList().size()}"></span> Konfigurationen.</p>
-    <p>Gesamtbetrag: <span th:text="${order.getAmountOrder()}"></span>€</p>
-    <form th:action="@{/checkout/payment}" th:method="post">
-        <h3>Rechnungsadresse</h3>
-        <p>Straße: <span th:text="${order.getCustomer().getAddress().getStreet()}"></span></p>
-        <p>Straße: <span th:text="${order.getCustomer().getAddress().getNumber()}"></span></p>
-        <p>Straße: <span th:text="${order.getCustomer().getAddress().getPostcode()}"></span></p>
-        <p>Straße: <span th:text="${order.getCustomer().getAddress().getTown()}"></span></p>
-        <p>Straße: <span th:text="${order.getCustomer().getAddress().getCountry()}"></span></p>
-        <div class="form-group">
-            <h3>Lieferadresse</h3>
-            <label for="street">Straße:</label>
-            <input type="text" class="form-control" id="street" name="street"/>
-            <label for="number">Hausnummer:</label>
-            <input type="text" class="form-control" id="number" name="number"/>
-            <label for="postcode">Postleitzahl:</label>
-            <input type="text" class="form-control" id="postcode" name="postcode"/>
-            <label for="town">Stadt:</label>
-            <input type="text" class="form-control" id="town" name="town"/>
-            <label for="country">Land:</label>
-            <input type="text" class="form-control" id="country" name="country"/>
+<div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px; margin-bottom: 150px;">
+    <div class="container">
+        <h1>Adressauswahl</h1>
+        <div class="row" style="margin-top: 40px;">
+            <div class="col-6">
+                <h4 th:if="${order.getConfigList().size()} == 1">Die Bestellung umfasst eine Konfiguration.</h4>
+                <h4 th:if="${order.getConfigList().size()} &gt; 1">Die Bestellung umfasst <span
+                        th:text="${order.getConfigList().size()}"></span> Konfigurationen.</h4>
+            </div>
+            <div class="col-6" style="text-align: right;">
+                <h4>Gesamtbetrag: <span th:text="${order.getAmountOrder()} + ' €'"></span></h4>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary">Weiter zur Zahlung</button>
-    </form>
+        <div class="row" style="margin-top: 40px;">
+            <div class="col-12">
+                <h4>Rechnungsadresse</h4>
+                <div class="col-12" style="margin-top: 20px;">
+                    <p><span th:text="${order.getCustomer().getFirstname()}"></span> <span
+                            th:text="${order.getCustomer().getLastname()}"></span></p>
+                    <p><span th:text="${order.getCustomer().getAddress().getStreet()}"></span> <span
+                            th:text="${order.getCustomer().getAddress().getNumber()}"></span></p>
+                    <p><span th:text="${order.getCustomer().getAddress().getPostcode()}"></span> <span
+                            th:text="${order.getCustomer().getAddress().getTown()}"></span></p>
+                    <p><span th:text="${order.getCustomer().getAddress().getCountry()}"></span></p>
+                </div>
+            </div>
+            <div class="col-12" style="margin-top: 40px;">
+                <p id="shippingAddressButton">Abweichende Lieferadresse</p>
+                <form th:action="@{/checkout/payment}" th:method="post">
+                    <input name="shippingAddress" type="hidden"/>
+                    <div class="form-group" id="shippingAddressContainer" style="display: none;">
+                        <h4>Lieferadresse</h4>
+                        <div class="form-row" style="margin-top: 20px;">
+                            <div class="form-group col-6">
+                                <label>Straße</label>
+                                <input class="form-control" th:name="street" type="text"/>
+                            </div>
+                            <div class="form-group col-6">
+                                <label>Hausnummer</label>
+                                <input class="form-control" th:name="number" type="text"/>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-4">
+                                <label>Postleitzahl</label>
+                                <input class="form-control" th:name="postcode" type="text"/>
+                            </div>
+                            <div class="form-group col-4">
+                                <label>Stadt</label>
+                                <input class="form-control" th:name="town" type="text"/>
+                            </div>
+                            <div class="form-group col-4">
+                                <label>Land</label>
+                                <input class="form-control" th:name="country" type="text"/>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px;"
+                            type="submit">Weiter zur Zahlung
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+<div th:replace="fragments/footer :: bikerator_footer"></div>
 </body>
 </html>
+
+<style type="text/css">
+    #shippingAddressButton:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+</style>
+
+<script type="application/javascript">
+    $('#shippingAddressButton').click(function () {
+        $('#shippingAddressContainer').show();
+        $('input[type=text]').attr("required", true);
+        $('input[name=shippingAddress]').val("true");
+        $('#shippingAddressButton').hide();
+    });
+</script>

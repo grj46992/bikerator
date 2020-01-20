@@ -1,22 +1,80 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<head th:replace="fragments/head :: bikerator_head" />
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/head :: bikerator_head"/>
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Warenkorb</title>
 </head>
 <body>
 <div th:replace="fragments/navbar :: bikerator_navbar"></div>
-<p th:if="${stockError}">Ein Artikel in Ihrer Bestellung ist derzeit leider nicht mehr verfügbar.</p>
-<div th:object="${order}" class="container">
-    <ul th:each="config: ${order.getConfigList()}">
-        <li th:text="${config.getName()}"></li>
-        <li th:text="${config.getDescription()}"></li>
-        <li th:text="${config.getAmountTotal()}"></li>
-    </ul>
-    <p>Gesamtbetrag: <span th:text="${order.getAmountOrder()}"></span></p>
-    <a th:href="@{/checkout/completeOrder}" class="btn btn-primary">Bestellung abschließen</a>
-    <a th:href="@{/user/myConfigurations}" class="btn btn-primary">Zurück zu meinen Konfigurationen</a>
+<div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px; margin-bottom: 150px;">
+    <div class="container">
+        <h1>Warenkorb</h1>
+        <div class="alert alert-danger" role="alert" style="margin-top: 40px;" th:if="${stockError}">
+            Ein Artikel in Ihrer Bestellung ist derzeit leider nicht mehr verfügbar.
+        </div>
+        <div class="alert alert-warning" role="alert" style="margin-top: 40px;" th:unless="${order} != null">
+            Keine Artikel im Warenkorb.
+        </div>
+        <div class="row" style="margin-top: 40px;" th:if="${order} != null" th:object="${order}">
+            <div class="row" style="margin: 20px; padding: 20px; border: 1px solid rgb(189, 189, 189);"
+                 th:each="config: ${order.getConfigList()}">
+                <div class="col-12 row">
+                    <div class="col-6" style="margin-bottom: 10px;">
+                        <h4>Name: <span th:text="${config.getName()}"></span></h4>
+                    </div>
+                    <div class="col-6" style="text-align: right">
+                        <a style="font-size: 18px; margin-top: 20px; color: rgba(0,0,0,.5);"
+                           th:href="@{'/checkout/removeFromOrder?id=' + ${config.getId()}}">Konfiguration entfernen</a>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <p><b>Beschreibung:</b></p>
+                    <p th:text="${config.getDescription()}"></p>
+                </div>
+                <div class="col-12 row">
+                    <div class="col-12">
+                        <p><b>Artikel:</b></p>
+                    </div>
+                    <div class="col-12 row" th:each="item: ${config.getItemList()}">
+                        <div class="col-6">
+                            <p th:text="${item.getName()}"></p>
+                        </div>
+                        <div class="col-6" style="text-align: right;">
+                            <p th:text="${item.getPrice()} + ' €'"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 row">
+                    <div class="col-6">
+                        <h4>Betrag:</h4>
+                    </div>
+                    <div class="col-6" style="text-align: right;">
+                        <h4 th:text="${config.getAmountTotal()} + ' €'"></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 row" style="margin-top: 20px;">
+                <div class="col-6">
+                    <h3>Gesamtbetrag der Bestellung:</h3>
+                </div>
+                <div class="col-6" style="text-align: right; margin-bottom: 20px;">
+                    <h3 th:text="${order.getAmountOrder() + ' €'}"></h3>
+                </div>
+            </div>
+            <div class="col-12 row">
+                <div class="col-6">
+                    <a class="btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px;"
+                       th:href="@{/checkout/completeOrder}">Weiter zur Bestellung</a>
+                </div>
+                <div class="col-6" style="text-align: right;">
+                    <a class="btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px;"
+                       th:href="@{/user/myConfigurations}">Zurück zu meinen Konfigurationen</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<div th:replace="fragments/footer :: bikerator_footer"></div>
 </body>
 </html>

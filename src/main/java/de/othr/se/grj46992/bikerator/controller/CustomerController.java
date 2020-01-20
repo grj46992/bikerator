@@ -3,7 +3,9 @@ package de.othr.se.grj46992.bikerator.controller;
 import de.othr.se.grj46992.bikerator.entity.Address;
 import de.othr.se.grj46992.bikerator.entity.Configuration;
 import de.othr.se.grj46992.bikerator.entity.Customer;
+import de.othr.se.grj46992.bikerator.entity.Order;
 import de.othr.se.grj46992.bikerator.service.CustomerManagementServiceIF;
+import de.othr.se.grj46992.bikerator.service.OrderManagementServiceIF;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,9 @@ import java.security.Principal;
 public class CustomerController {
     @Autowired
     private CustomerManagementServiceIF customerManagementService;
+
+    @Autowired
+    private OrderManagementServiceIF orderManagementService;
 
     @RequestMapping(value = "/user/account")
     public String account(
@@ -102,5 +107,16 @@ public class CustomerController {
         customerManagementService.deleteCustomer(customer);
         session.invalidate();
         return "redirect:/logout";
+    }
+
+    @RequestMapping(value = "/user/shoppingcart")
+    public String shoppingcart(
+            Principal principal,
+            Model model
+    ) {
+        Customer customer = customerManagementService.readById(principal.getName());
+        Order currentOrder = orderManagementService.readOrderByCustomer(customer);
+        model.addAttribute("order", currentOrder);
+        return "user/shoppingcart";
     }
 }

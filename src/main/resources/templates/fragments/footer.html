@@ -1,7 +1,16 @@
-<footer  th:fragment="bikerator_footer" class="footer">
-    <div class="container">
-        <a th:href="@{/}">Kontakt</a>
-        <a th:href="@{/}">Impressum</a>
-        <a th:href="@{/}">Datenschutz</a>
+<!-- Footer -->
+<footer class="page-footer" style="text-align: center; border-top: 1px solid rgba(0,0,0,.5); position: fixed; bottom: 0px; width: 100%; height: 40px; line-height: 40px; background-color: white;"
+        th:fragment="bikerator_footer">
+    <div class="row container-fluid">
+        <div class="col-4">
+            <a style="color: rgba(0,0,0,.5);" th:href="@{/}">Kontakt</a>
+        </div>
+        <div class="col-4">
+            <a style="color: rgba(0,0,0,.5);" th:href="@{/}">Impressum</a>
+        </div>
+        <div class="col-4">
+            <a style="color: rgba(0,0,0,.5);" th:href="@{/}">Datenschutz</a>
+        </div>
     </div>
 </footer>
+<!-- Footer -->

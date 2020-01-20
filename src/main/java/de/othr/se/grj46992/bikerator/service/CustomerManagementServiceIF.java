@@ -1,5 +1,6 @@
 package de.othr.se.grj46992.bikerator.service;
 
+import de.othr.se.grj46992.bikerator.entity.Address;
 import de.othr.se.grj46992.bikerator.entity.Configuration;
 import de.othr.se.grj46992.bikerator.entity.Customer;
 import de.othr.se.grj46992.bikerator.entity.Order;
@@ -20,6 +21,8 @@ public interface CustomerManagementServiceIF {
     Customer readById(String username);
 
     UserDetails loadUserByUsername(String id);
+
+    Address createAddress(Address address);
 
     void updateCustomerConfigurationList(Customer user, Configuration configuration);
 

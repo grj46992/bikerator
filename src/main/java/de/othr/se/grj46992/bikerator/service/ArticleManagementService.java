@@ -29,6 +29,9 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     @Autowired
     private CustomerRepository customerRepository;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
     private String[] categoryOrder = {"Fahrradrahmen", "Fahrradfelgen", "Fahrradreifen", "Fahrradschaltwerke"};
 
     @Override
@@ -179,7 +182,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
             for (Item item : itemList) {
                 newAmountTotal += item.getPrice();
             }
-            currentConfig.setAmountTotal(newAmountTotal);
+            currentConfig.setAmountTotal(Math.round(newAmountTotal * 100.0) / 100.0);
             return currentConfig;
         } else {
             return currentConfig;
@@ -252,22 +255,28 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
         return newConf.getId();
     }
 
-    @Transactional
     @Override
     public void deleteConfiguration(Configuration configuration, Customer currentUser) {
         Optional<Customer> optional = customerRepository.findById(currentUser.getUsername());
-        // Check if item exists
         if (optional.isPresent()) {
             Customer user = optional.get();
-            List<Configuration> configList = user.getConfigList();
-            if (configList.contains(configuration)) {
-                if (configList.remove(configuration)) {
-                    customerRepository.save(user);
-                    configurationRepository.deleteById(configuration.getId());
-                }
-            } else {
-                configurationRepository.deleteById(configuration.getId());
+            List<Configuration> userConfigList = user.getConfigList();
+            if (userConfigList.contains(configuration)) {
+                userConfigList.remove(configuration);
+                customerRepository.save(user);
             }
+            /*
+            List<Order> orderList = (List<Order>) orderRepository.findAll();
+            if (!orderList.isEmpty()) {
+                for (Order order: orderList){
+                    if (order.getConfigList().contains(configuration)) {
+                        order.getConfigList().remove(configuration);
+                        orderRepository.save(order);
+                    }
+                }
+            }
+            configurationRepository.deleteById(configuration.getId());
+            */
         }
     }
 

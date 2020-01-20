@@ -80,4 +80,8 @@ public class Order extends LongIdEntity implements Serializable {
     public void addConfiguration(Configuration configuration) {
         this.configList.add(configuration);
     }
+
+    public void removeConfiguration(Configuration configuration) {
+        this.configList.remove(configuration);
+    }
 }

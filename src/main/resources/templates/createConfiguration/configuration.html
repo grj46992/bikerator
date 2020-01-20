@@ -1,52 +1,59 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<head th:replace="fragments/head :: bikerator_head" />
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/head :: bikerator_head"/>
 <head>
     <meta charset="UTF-8">
     <title>Konfiguration</title>
 </head>
 <body>
-    <div th:replace="fragments/navbar :: bikerator_navbar"></div>
-    <div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px;">
-        <div class="container">
-            <h3 th:if="${currentCategory == 1}">Zweiter Schritt: Wähle deinen Felgensatz</h3>
-            <h3 th:if="${currentCategory == 2}">Dritter Schritt: Wähle deinen Reifensatz</h3>
-            <h3 th:if="${currentCategory == 3}">Vierter Schritt: Wähle deine Schaltwerk</h3>
-            <form th:action="@{/createConfiguration/back}" th:method="post" style="padding: 20px;">
-                <input type="hidden" th:name="currentCategory" th:value="${currentCategory}"/>
-                <button type="submit" class="btn btn btn-outline-secondary btn-large" style="margin: 10px 30px; padding: 8px 30px;">Zurück</button>
-            </form>
-            <form id="configurationForm" th:action="@{/createConfiguration/next}" th:method="post" style="padding: 20px;">
-                <input type="hidden" th:name="currentCategory" th:value="${currentCategory}"/>
-                <div th:each="elem: ${itemMap}">
-                    <div th:each="item: ${elem.value}" class="col-12 row" style="margin: 30px 0px; border: 1px solid rgb(189, 189, 189); ">
-                        <div class="col-lg-4 col-md-12">
-                            <img th:src="@{/images/bike.jpg}" style="width: 10%;"/>
-                        </div>
-                        <div class="col-lg-1"></div>
-                        <div class="col-lg-4 col-md-6" style="padding: 30px;">
-                            <h4 th:text="${item.name}"></h4>
-                            <p>Artikelnummer: <span th:text="${item.getId()}"></span></p>
-                            <p th:text="${item.description}"></p>
-                            <span>Lagerbestand: <span th:text="${item.getStock()}"></span></span><br/>
-                            <span>Gewicht: <span th:text="${item.getWeight()}"></span> Kg</span><br/>
-                            <span>Kategorie: <span th:text="${item.getCategory().getName()}"></span></span>
-                        </div>
-                        <div class="col-lg-3 col-md-6" style="padding: 30px;">
-                            <label class="checkContainer">Artikel wählen
-                                <input type="radio" th:name="itemId" th:value="${item.getId()}" required/>
-                                <span class="checkmark"></span>
-                            </label>
-                            <div class="container" style="position: absolute; bottom: 10%;">
-                                <h3 th:text="${item.price} + ' €'"></h3>
-                            </div>
+<div th:replace="fragments/navbar :: bikerator_navbar"></div>
+<div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px; margin-bottom: 150px;">
+    <div class="container">
+        <h3 th:if="${currentCategory == 1}">Zweiter Schritt: Wähle deinen Felgensatz</h3>
+        <h3 th:if="${currentCategory == 2}">Dritter Schritt: Wähle deinen Reifensatz</h3>
+        <h3 th:if="${currentCategory == 3}">Vierter Schritt: Wähle dein Schaltwerk</h3>
+        <form style="margin-top: 40px; padding: 20px 20px 0 20px;" th:action="@{/createConfiguration/back}"
+              th:method="post">
+            <input th:name="currentCategory" th:value="${currentCategory}" type="hidden"/>
+            <button class="btn btn btn-outline-secondary btn-large" style="padding: 8px 30px;" type="submit">Zurück
+            </button>
+        </form>
+        <form id="configurationForm" style="padding: 0 20px 20px 20px;" th:action="@{/createConfiguration/next}"
+              th:method="post">
+            <input th:name="currentCategory" th:value="${currentCategory}" type="hidden"/>
+            <div th:each="elem: ${itemMap}">
+                <div class="col-12 row" style="margin: 30px 0px; border: 1px solid rgb(189, 189, 189); "
+                     th:each="item: ${elem.value}">
+                    <div class="col-lg-4 col-md-12">
+                        <img style="width: 80%;" th:src="@{/images/bike.jpg}"/>
+                    </div>
+                    <div class="col-lg-1"></div>
+                    <div class="col-lg-4 col-md-6" style="padding: 30px;">
+                        <h4 th:text="${item.name}"></h4>
+                        <p>Artikelnummer: <span th:text="${item.getId()}"></span></p>
+                        <p th:text="${item.description}"></p>
+                        <span>Lagerbestand: <span th:text="${item.getStock()}"></span></span><br/>
+                        <span>Gewicht: <span th:text="${item.getWeight()}"></span> Kg</span><br/>
+                        <span>Kategorie: <span th:text="${item.getCategory().getName()}"></span></span>
+                    </div>
+                    <div class="col-lg-3 col-md-6" style="padding: 30px;">
+                        <label class="checkContainer">Artikel wählen
+                            <input required th:name="itemId" th:value="${item.getId()}" type="radio"/>
+                            <span class="checkmark"></span>
+                        </label>
+                        <div class="container" style="position: absolute; bottom: 10%;">
+                            <h3 th:text="${item.price} + ' €'"></h3>
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="btn btn btn-outline-secondary btn-large" style="margin: 10px 30px; padding: 8px 30px;">Weiter</button>
-            </form>
-        </div>
+            </div>
+            <button class="btn btn btn-outline-secondary btn-large" style="margin-top: 10px; padding: 8px 30px;"
+                    type="submit">Weiter
+            </button>
+        </form>
     </div>
+</div>
+<div th:replace="fragments/footer :: bikerator_footer"></div>
 </body>
 </html>
 
@@ -121,8 +128,8 @@
 </style>
 
 <script type="application/javascript">
-    $('#configurationForm button').click(function() {
-        if(!$('input[type=radio]').is(':checked')) {
+    $('#configurationForm button').click(function () {
+        if (!$('input[type=radio]').is(':checked')) {
             alert('Wähle bitte einen Artikel aus um fortzufahren.');
         }
     });

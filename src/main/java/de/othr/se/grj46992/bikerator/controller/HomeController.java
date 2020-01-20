@@ -64,6 +64,8 @@ public class HomeController {
             @ModelAttribute("passwordCheck") String passwordCheck,
             @ModelAttribute("email") String email
     ) {
+
+        //TODO nicht selber kunde nochmal registrieren
         Customer customer = new Customer();
         customer.setFirstname(firstname);
         customer.setLastname(lastname);

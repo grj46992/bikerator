@@ -1,5 +1,6 @@
 package de.othr.se.grj46992.bikerator.service;
 
+import de.othr.se.grj46992.bikerator.entity.Address;
 import de.othr.se.grj46992.bikerator.entity.Configuration;
 import de.othr.se.grj46992.bikerator.entity.Customer;
 import de.othr.se.grj46992.bikerator.entity.Order;
@@ -75,6 +76,11 @@ public class CustomerManagementService implements CustomerManagementServiceIF, U
             return customer;
         }
         return null;
+    }
+
+    @Override
+    public Address createAddress(Address address) {
+        return addressRepository.save(address);
     }
 
     @Override

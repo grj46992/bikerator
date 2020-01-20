@@ -1,6 +1,7 @@
 package de.othr.se.grj46992.bikerator.service;
 
 import de.othr.daj.megabikeshop.moneyboi.entity.Transaction;
+import de.othr.se.grj46992.bikerator.entity.Address;
 import de.othr.se.grj46992.bikerator.entity.Configuration;
 import de.othr.se.grj46992.bikerator.entity.Customer;
 import de.othr.se.grj46992.bikerator.entity.Order;
@@ -39,11 +40,32 @@ public class OrderManagementService implements OrderManagementServiceIF {
     @Override
     public Order updateOrderAddConfiguration(Order order, Configuration configuration) {
         order.addConfiguration(configuration);
-        order.setAmountOrder(order.getAmountOrder() + configuration.getAmountTotal());
+        Double newAmountTotal = order.getAmountOrder() + configuration.getAmountTotal();
+        order.setAmountOrder(Math.round(newAmountTotal * 100.0) / 100.0);
         return orderRepository.save(order);
     }
 
-    //TODO implement removeConfig from order function
+    @Override
+    public Order updateOrderRemoveConfiguration(Order order, Configuration configuration) {
+        order.removeConfiguration(configuration);
+        if (order.getConfigList().size() < 1) {
+            Customer customer = order.getCustomer();
+            customer.setCurrentOrder(null);
+            customerRepository.save(customer);
+            orderRepository.delete(order);
+            return null;
+        } else {
+            Double newAmountTotal = order.getAmountOrder() - configuration.getAmountTotal();
+            order.setAmountOrder(Math.round(newAmountTotal * 100.0) / 100.0);
+            return orderRepository.save(order);
+        }
+    }
+
+    @Override
+    public void updateOrderAddShippingAddress(Order order, Address shippingAdress) {
+        order.setShippingAddress(shippingAdress);
+        orderRepository.save(order);
+    }
 
     @Override
     public Order updateOrderComplete(Order order) {
@@ -54,7 +76,7 @@ public class OrderManagementService implements OrderManagementServiceIF {
 
     @Override
     public Order readOrderByCustomer(Customer customer) {
-        return orderRepository.findByCustomer(customer);
+        return orderRepository.findByCustomerAndCompleted(customer, false);
     }
 
     @Override

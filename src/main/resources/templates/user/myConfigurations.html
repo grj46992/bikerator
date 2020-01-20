@@ -1,28 +1,83 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<head th:replace="fragments/head :: bikerator_head" />
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/head :: bikerator_head"/>
 <head>
     <meta charset="UTF-8">
     <title>Meine Konfigurationen</title>
 </head>
 <body>
 <div th:replace="fragments/navbar :: bikerator_navbar"></div>
-<div class="container">
-    <p th:if="${maxNumberError}">Konfiguration konnte nicht gespeichert werden. Sie haben bereits die maximale Anzahl erreicht.</p>
-    <div class="row">
-        <div class="col-md-4" th:each="config: ${configList}">
-            <span th:text="${config.getName()}"></span>
-            <span th:text="${config.getDescription()}"></span>
-            <ul th:each="item: ${config.getItemList()}">
-                    <li th:text="${item.getName()}"></li>
-            </ul>
-            <p>Gesamtbetrag: <span th:text="${config.getAmountTotal()}"></span></p>
-            <a class="btn btn-primary" th:href="@{'/user/editConfiguration?id=' + ${config.getId()}}">Bearbeiten</a>
-            <a class="btn btn-primary" th:href="@{'/user/deleteConfiguration?id=' + ${config.getId()}}">Löschen</a>
-            <a class="btn btn-primary" th:href="@{'/user/postConfiguration?id=' + ${config.getId()}}">Auf Friendzone posten</a>
-            <a class="btn btn-primary" th:href="@{'/user/addToOrder?id=' + ${config.getId()}}">Zu Warenkorb hinzufügen</a>
+<div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px; margin-bottom: 150px;">
+    <div class="container">
+        <h1>Meine Konfigurationen</h1>
+        <div class="alert alert-danger" role="alert" style="margin-top: 40px;" th:if="${maxNumberError}">
+            Konfiguration konnte nicht gespeichert werden. Sie haben bereits die maximale Anzahl erreicht.
+        </div>
+        <div class="alert alert-warning" role="alert" style="margin-top: 40px;" th:if="${configList.isEmpty()}">
+            Du hast keine Konfiguration gespeichert. Um eine Konfiguration zu erstellen, klicke in der Navigationsleiste
+            auf 'Konfiguration starten'.
+        </div>
+        <div class="row" style="margin-top: 40px;">
+            <div class="col-md-12 row" style="padding: 30px; margin: 20px; border: 1px solid rgb(189, 189, 189);"
+                 th:each="config: ${configList}">
+                <div class="col-12 row" style="margin-bottom: 15px;">
+                    <div class="col-8">
+                        <h3 th:text="${config.getName()}"></h3>
+                    </div>
+                    <div class="col-4" style="text-align: right;">
+                        <p>Erstellt am:
+                        <td th:text="${#dates.format(config.getCreateDate(), 'dd-MMM-yyyy')}"></td>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-12" style="margin-bottom: 20px;">
+                    <p th:text="${config.getDescription()}"></p>
+                </div>
+                <div class="col-6" style="padding:20px;">
+                    <div class="row" th:each="item: ${config.getItemList()}">
+                        <div class="col-8">
+                            <a style="color: rgba(0,0,0,.5);" th:href="@{'/artikel/' + ${item.getId()}}"
+                               th:text="${item.getName()}"></a>
+                        </div>
+                        <div class="col-4" style="text-align: right">
+                            <p th:text="${item.getPrice()} + ' €'"></p>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 20px;">
+                        <div class="col-8">
+                            <h4>Gesamtbetrag: </h4>
+                        </div>
+                        <div class="col-4" style="text-align: right">
+                            <h4 th:text="${config.getAmountTotal()} + ' €'"></h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 row" style="padding: 20px;">
+                    <div class="col-6">
+                        <a class="btn btn-outline-secondary btn-large"
+                           style="margin-top: 20px; padding: 8px 30px; width: 100%;"
+                           th:href="@{'/user/editConfiguration?id=' + ${config.getId()}}">Bearbeiten</a>
+                    </div>
+                    <div class="col-6" style="text-align: right;">
+                        <a class="btn btn-outline-secondary btn-large"
+                           style="margin-top: 20px; padding: 8px 30px; width: 100%;"
+                           th:href="@{'/user/deleteConfiguration?id=' + ${config.getId()}}">Löschen</a>
+                    </div>
+                    <div class="col-12">
+                        <a class="btn btn-outline-secondary btn-large"
+                           style="margin-top: 20px; padding: 8px 30px; width: 100%;"
+                           th:href="@{'/user/postConfiguration?id=' + ${config.getId()}}">Auf Friendzone posten</a>
+                    </div>
+                    <div class="col-12">
+                        <a class="btn btn-outline-secondary btn-large"
+                           style="margin-top: 20px; padding: 8px 30px; width: 100%;"
+                           th:href="@{'/user/addToOrder?id=' + ${config.getId()}}">Zu Warenkorb hinzufügen</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+<div th:replace="fragments/footer :: bikerator_footer"></div>
 </body>
 </html>

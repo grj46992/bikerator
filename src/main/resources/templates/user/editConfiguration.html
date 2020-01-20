@@ -1,40 +1,77 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<head th:replace="fragments/head :: bikerator_head" />
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/head :: bikerator_head"/>
 <head>
     <meta charset="UTF-8">
     <title>Meine Konfigurationen</title>
 </head>
 <body>
-    <div th:replace="fragments/navbar :: bikerator_navbar"></div>
+<div th:replace="fragments/navbar :: bikerator_navbar"></div>
+<div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px; margin-bottom: 150px;">
     <div class="container">
-        <h1>Edit Configuration</h1>
-        <form th:if="${configExists}" th:action="@{'/user/editConfiguration/save?id=' + ${config.getId()}}" th:method="post">
+        <h1>Konfiguration beschreiben</h1>
+        <form style="margin-top: 40px;" th:action="@{'/user/editConfiguration/save?id=' + ${config.getId()}}"
+              th:if="${configExists}" th:method="post">
             <div class="form-group">
-                <label th:for="name">Name:</label>
-                <input type="text" class="form-control" th:id="name" th:name="name" th:value="${config.getName()}"/>
+                <label>Name</label>
+                <input class="form-control" th:name="name" th:value="${config.getName()}" type="text"/>
             </div>
             <div class="form-group">
-                <label th:for="beschreibung">Beschreibung:</label>
-                <input type="text" class="form-control" th:id="beschreibung" th:name="beschreibung" th:value="${config.getDescription()}">
+                <label>Beschreibung</label>
+                <textarea class="form-control" style="width: 100%; height: 200px;" th:name="beschreibung"
+                          th:value="${config.getDescription()}"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Speichern</button>
+            <button class="btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px; width: 180px;"
+                    type="submit">Speichern
+            </button>
         </form>
-        <form th:unless="${configExists}" th:action="@{/user/editConfiguration/save}" th:method="post">
+        <form style="margin-top: 40px;" th:action="@{/user/editConfiguration/save}" th:method="post"
+              th:unless="${configExists}">
             <div class="form-group">
-                <label th:for="name">Name:</label>
-                <input type="text" class="form-control" th:id="name" th:name="name"/>
+                <label>Name</label>
+                <input class="form-control" th:name="name" th:value="${config.getName()}" type="text"/>
             </div>
             <div class="form-group">
-                <label th:for="beschreibung">Beschreibung:</label>
-                <input type="text" class="form-control" th:id="beschreibung" th:name="beschreibung">
+                <label>Beschreibung</label>
+                <textarea class="form-control" style="width: 100%; height: 200px;" th:name="beschreibung"
+                          th:value="${config.getDescription()}"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Speichern</button>
+            <button class="btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px; width: 180px;"
+                    type="submit">Speichern
+            </button>
         </form>
-        <ul th:each="item: ${config.getItemList()}">
-            <li th:text="${item.getName()}"></li>
-        </ul>
-        <p>Gesamtbetrag: <span th:text="${config.getAmountTotal()}"></span></p>
+        <button class="btn btn-outline-secondary btn-large" id="showItemsButton"
+                style="margin-top: 40px; padding: 8px 30px; width: 180px;">Artikel anzeigen
+        </button>
+        <div id="itemContainer" style="display: none;">
+            <div class="row" style="margin: 30px 0px; border: 1px solid rgb(189, 189, 189);"
+                 th:each="item: ${config.getItemList()}">
+                <div class="col-lg-4 col-md-12">
+                    <img style="width: 80%;" th:src="@{/images/bike.jpg}"/>
+                </div>
+                <div class="col-lg-1"></div>
+                <div class="col-lg-4 col-md-6" style="padding: 30px;">
+                    <h4 th:text="${item.name}"></h4>
+                    <p>Artikelnummer: <span th:text="${item.getId()}"></span></p>
+                    <p th:text="${item.description}"></p>
+                    <span>Gewicht: <span th:text="${item.getWeight()}"></span> Kg</span><br/>
+                    <span>Kategorie: <span th:text="${item.getCategory().getName()}"></span></span>
+                </div>
+                <div class="col-lg-3 col-md-6" style="padding: 30px;">
+                    <div class="container" style="position: absolute; bottom: 10%;">
+                        <h3 th:text="${item.price} + ' €'"></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+<div th:replace="fragments/footer :: bikerator_footer"></div>
 </body>
 </html>
+
+<script type="application/javascript">
+    $('#showItemsButton').click(function () {
+        $('#itemContainer').toggle();
+    });
+</script>

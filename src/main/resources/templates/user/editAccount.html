@@ -1,57 +1,62 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<head th:replace="fragments/head :: bikerator_head" />
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/head :: bikerator_head"/>
 <head>
     <meta charset="UTF-8">
     <title>Mein Konto</title>
 </head>
-    <body>
-        <div th:replace="fragments/navbar :: bikerator_navbar"></div>
-        <div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px;">
-            <div class="container">
-            <h1>Meine Daten</h1>
-                <form th:action="@{/user/editAccount/save}" th:method="post" style="padding: 20px;">
-                    <div class="form-row">
-                        <div class="form-group col-6">
-                            <label>Vorname</label>
-                            <input type="text" class="form-control" name="firstname" th:value="${user.getFirstname()}"/>
-                        </div>
-                        <div class="form-group col-6">
-                            <label>Nachname</label>
-                            <input type="text" class="form-control" name="lastname" th:value="${user.getLastname()}"/>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-6">
-                            <label>Straße</label>
-                            <input type="text" class="form-control" name="street" th:value="${user.getAddress().getStreet()}"/>
-                        </div>
-                        <div class="form-group col-6">
-                            <label>Hausnummer</label>
-                            <input type="text" class="form-control" name="number" th:value="${user.getAddress().getNumber()}"/>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-4">
-                            <label>Postleitzahl</label>
-                            <input type="text" class="form-control" name="postcode" th:value="${user.getAddress().getPostcode()}"/>
-                        </div>
-                        <div class="form-group col-4">
-                            <label>Stadt</label>
-                            <input type="text" class="form-control" name="town" th:value="${user.getAddress().getTown()}"/>
-                        </div>
-                        <div class="form-group col-4">
-                            <label>Land</label>
-                            <input type="text" class="form-control" name="country" th:value="${user.getAddress().getCountry()}"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>E-Mail Adresse</label>
-                        <input type="text" class="form-control" name="email" th:value="${user.getEmail()}"/>
-                    </div>
-                    <button type="submit" class="btn btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px;">Änderungen speichern</button>
-                </form>
+<body>
+<div th:replace="fragments/navbar :: bikerator_navbar"></div>
+<div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px; margin-bottom: 150px;">
+    <div class="container">
+        <h1>Persönliche Daten bearbeiten</h1>
+        <form style="margin-top: 40px;" th:action="@{/user/editAccount/save}" th:method="post">
+            <div class="form-row">
+                <div class="form-group col-6">
+                    <label>Vorname</label>
+                    <input class="form-control" name="firstname" th:value="${user.getFirstname()}" type="text"/>
+                </div>
+                <div class="form-group col-6">
+                    <label>Nachname</label>
+                    <input class="form-control" name="lastname" th:value="${user.getLastname()}" type="text"/>
+                </div>
             </div>
-        </div>
-    </body>
+            <div class="form-row">
+                <div class="form-group col-6">
+                    <label>Straße</label>
+                    <input class="form-control" name="street" th:value="${user.getAddress().getStreet()}" type="text"/>
+                </div>
+                <div class="form-group col-6">
+                    <label>Hausnummer</label>
+                    <input class="form-control" name="number" th:value="${user.getAddress().getNumber()}" type="text"/>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-4">
+                    <label>Postleitzahl</label>
+                    <input class="form-control" name="postcode" th:value="${user.getAddress().getPostcode()}"
+                           type="text"/>
+                </div>
+                <div class="form-group col-4">
+                    <label>Stadt</label>
+                    <input class="form-control" name="town" th:value="${user.getAddress().getTown()}" type="text"/>
+                </div>
+                <div class="form-group col-4">
+                    <label>Land</label>
+                    <input class="form-control" name="country" th:value="${user.getAddress().getCountry()}"
+                           type="text"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>E-Mail Adresse</label>
+                <input class="form-control" name="email" th:value="${user.getEmail()}" type="text"/>
+            </div>
+            <button class="btn btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px;"
+                    type="submit">Änderungen speichern
+            </button>
+        </form>
+    </div>
+</div>
+<div th:replace="fragments/footer :: bikerator_footer"></div>
+</body>
 </html>

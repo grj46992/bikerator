@@ -1,22 +1,130 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<head th:replace="fragments/head :: bikerator_head" />
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/head :: bikerator_head"/>
 <head>
     <title>Spring Security Example</title>
 </head>
 <body>
 <div th:replace="fragments/navbar :: bikerator_navbar"></div>
-<div class="container">
-    <p th:if="${paymentError}">Bei Ihrer Zahlung ist leider ein Fehler aufgetreten.</p>
-    <h3>Zahlungsart</h3>
-    <form th:action="@{/checkout/complete}" th:method="post">
-        <h4>Zahlungsservice</h4>
-        <label>Email Adresse</label>
-        <input type="text" th:name="email"/>
-        <label>Passwort</label>
-        <input type="password" th:name="password"/>
-        <button type="submit">Zahlungspflichtig bestellen</button>
-    </form>
+<div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px; margin-bottom: 150px;">
+    <div class="container">
+        <div class="alert alert-danger" role="alert" th:if="${paymentError}">
+            Bei Ihrer Zahlung ist leider ein Fehler aufgetreten.
+        </div>
+        <h1>Zahlungsart wählen</h1>
+        <form id="paymentForm" th:action="@{/checkout/complete}" th:method="post">
+            <div class="col-12" style="margin-top: 40px;">
+                <label class="checkContainer">Rechnung
+                    <input required th:name="payment" th:value="bill" type="radio"/>
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+            <div class="col-12" style="margin-top: 40px;">
+                <label class="checkContainer">Moneyboi
+                    <input id="moneyboi" required th:name="payment" th:value="moneyboi" type="radio"/>
+                    <span class="checkmark"></span>
+                </label>
+                <div class="form-group col-6" style="margin-top: 20px;">
+                    <label>E-Mail Adresse deines Moneyboi-Kontos</label>
+                    <input class="form-control" th:name="email" type="text"/>
+                </div>
+                <div class="form-group col-6">
+                    <label>Passwort deines Moneyboi-Kontos</label>
+                    <input class="form-control" th:name="password" type="text"/>
+                </div>
+            </div>
+            <button class="btn btn btn-outline-secondary btn-large" style="margin-top: 30px; padding: 8px 30px;"
+                    type="submit">Zahlungspflichtig bestellen
+            </button>
+        </form>
+    </div>
 </div>
+<div th:replace="fragments/footer :: bikerator_footer"></div>
 </body>
 </html>
+
+<script type="application/javascript">
+    $('input[name=payment]').change(function () {
+        if ($('#moneyboi').is(':checked')) {
+            $('input[name=email]').attr("required", true);
+            $('input[name=password]').attr("required", true);
+        } else {
+            $('input[name=email]').attr("required", false);
+            $('input[name=password]').attr("required", false);
+        }
+    });
+
+    $('#paymentForm button').click(function () {
+        if (!$('input[type=radio]').is(':checked')) {
+            alert('Wähle bitte eine Zahlungsart aus um fortzufahren.');
+        }
+    });
+</script>
+<style type="text/css">
+
+    /* Customize the label (the container) */
+    .checkContainer {
+        display: block;
+        position: relative;
+        padding-left: 35px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        font-size: 18px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    /* Hide the browser's default radio button */
+    .checkContainer input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+
+    /* Create a custom radio button */
+    .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 25px;
+        width: 25px;
+        background-color: #eee;
+        border-radius: 50%;
+    }
+
+    /* On mouse-over, add a grey background color */
+    .checkContainer:hover input ~ .checkmark {
+        background-color: #ccc;
+    }
+
+    /* When the radio button is checked, add a blue background */
+    .checkContainer input:checked ~ .checkmark {
+        background-color: #2196F3;
+    }
+
+    /* Create the indicator (the dot/circle - hidden when not checked) */
+    .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    /* Show the indicator (dot/circle) when checked */
+    .checkContainer input:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    /* Style the indicator (dot/circle) */
+    .checkContainer .checkmark:after {
+        top: 9px;
+        left: 9px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: white;
+    }
+</style>

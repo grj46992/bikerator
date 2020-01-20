@@ -3,6 +3,7 @@ package de.othr.se.grj46992.bikerator.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +20,8 @@ public class Configuration extends LongIdEntity implements Serializable {
             joinColumns = {@JoinColumn(name = "configurationId")},
             inverseJoinColumns = {@JoinColumn(name = "itemId")})
     private List<Item> itemList = new ArrayList<Item>();
+    //@ManyToMany(mappedBy = "configList", cascade = CascadeType.REMOVE)
+    //private List<Order> orderList;
 
     public String getName() {
         return name;
@@ -66,20 +69,5 @@ public class Configuration extends LongIdEntity implements Serializable {
 
     public void setItemList(List<Item> itemList) {
         this.itemList = itemList;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj == null || obj.getClass() != this.getClass()) {
-            return false;
-        }
-        Configuration c = (Configuration) obj;
-        if (c.getId() == this.getId()) {
-            return true;
-        }
-        return false;
     }
 }

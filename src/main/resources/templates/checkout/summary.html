@@ -1,11 +1,86 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<head th:replace="fragments/head :: bikerator_head" />
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/head :: bikerator_head"/>
 <head>
-    <title>Spring Security Example</title>
+    <title>Bestellung</title>
 </head>
 <body>
 <div th:replace="fragments/navbar :: bikerator_navbar"></div>
-<h1>Alles gut gegangen!</h1>
+<div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px; margin-bottom: 150px;">
+    <div class="container">
+        <h1>Herzlichen Glückwunsch zu deiner Bestellung!</h1>
+        <div class="row" style="margin-top: 40px;" th:object="${order}">
+            <div class="col-12">
+                <h4>Deine Bestellung im Überblick</h4>
+            </div>
+            <div class="col-12 row" style="margin: 20px; padding: 20px; border: 1px solid rgb(189, 189, 189);">
+                <div class="col-6">
+                    <h4>Rechnungsadresse</h4>
+                    <div class="col-6" style="margin-top: 20px;">
+                        <p><span th:text="${order.getCustomer().getFirstname()}"></span> <span
+                                th:text="${order.getCustomer().getLastname()}"></span></p>
+                        <p><span th:text="${order.getBillingAddress().getStreet()}"></span> <span
+                                th:text="${order.getBillingAddress().getNumber()}"></span></p>
+                        <p><span th:text="${order.getBillingAddress().getPostcode()}"></span> <span
+                                th:text="${order.getBillingAddress().getTown()}"></span></p>
+                        <p><span th:text="${order.getBillingAddress().getCountry()}"></span></p>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <h4>Lieferadresse</h4>
+                    <div class="col-12" style="margin-top: 20px;">
+                        <p><span th:text="${order.getShippingAddress().getStreet()}"></span> <span
+                                th:text="${order.getShippingAddress().getNumber()}"></span></p>
+                        <p><span th:text="${order.getShippingAddress().getPostcode()}"></span> <span
+                                th:text="${order.getShippingAddress().getTown()}"></span></p>
+                        <p><span th:text="${order.getShippingAddress().getCountry()}"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 row" style="margin: 20px; padding: 20px; border: 1px solid rgb(189, 189, 189);"
+                 th:each="config: ${order.getConfigList()}">
+                <div class="col-12 row">
+                    <div class="col-6" style="margin-bottom: 10px;">
+                        <h4>Name: <span th:text="${config.getName()}"></span></h4>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <p><b>Beschreibung:</b></p>
+                    <p th:text="${config.getDescription()}"></p>
+                </div>
+                <div class="col-12 row">
+                    <div class="col-12">
+                        <p><b>Artikel:</b></p>
+                    </div>
+                    <div class="col-12 row" th:each="item: ${config.getItemList()}">
+                        <div class="col-6">
+                            <p th:text="${item.getName()}"></p>
+                        </div>
+                        <div class="col-6" style="text-align: right;">
+                            <p th:text="${item.getPrice()} + ' €'"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 row">
+                    <div class="col-6">
+                        <h4>Betrag:</h4>
+                    </div>
+                    <div class="col-6" style="text-align: right;">
+                        <h4 th:text="${config.getAmountTotal()} + ' €'"></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 row" style="margin-top: 20px;">
+                <div class="col-6">
+                    <h3>Gesamtbetrag der Bestellung:</h3>
+                </div>
+                <div class="col-6" style="text-align: right; margin-bottom: 20px;">
+                    <h3 th:text="${order.getAmountOrder() + ' €'}"></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/footer :: bikerator_footer"></div>
 </body>
 </html>

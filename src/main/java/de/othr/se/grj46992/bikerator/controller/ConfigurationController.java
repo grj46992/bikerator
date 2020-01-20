@@ -103,8 +103,9 @@ public class ConfigurationController {
         int nextCategoryIndex = currentCategoryIndex + 1;
         if (articleManagementService.readCategoryByIndex(nextCategoryIndex) == null) {
             // Next Category does not exists
+            Configuration finishedConfig = (Configuration) session.getAttribute("configuration");
             model.addAttribute("currentCategory", nextCategoryIndex);
-            model.addAttribute("config", session.getAttribute("configuration"));
+            model.addAttribute("config", finishedConfig);
             return "createConfiguration/complete";
         } else {
             //Load Categories and Items
@@ -174,7 +175,8 @@ public class ConfigurationController {
             HttpSession session,
             Model model
     ) {
-        model.addAttribute("config", session.getAttribute("configuration"));
+        Configuration finishedConfig = (Configuration) session.getAttribute("configuration");
+        model.addAttribute("config", finishedConfig);
         return "createConfiguration/complete";
     }
 
@@ -220,6 +222,7 @@ public class ConfigurationController {
     public String editConfigurations(
             @RequestParam(required = false, name = "id") Long configId,
             HttpSession session,
+            Principal principal,
             Model model
     ) {
         Configuration currentConfig = (Configuration) session.getAttribute("configuration");
@@ -227,8 +230,15 @@ public class ConfigurationController {
             currentConfig = articleManagementService.readConfigurationById(configId);
             model.addAttribute("configExists", true);
         }
-        model.addAttribute("config", currentConfig);
-        return "user/editConfiguration";
+        if (currentConfig != null) {
+            model.addAttribute("config", currentConfig);
+            return "user/editConfiguration";
+        } else {
+            Customer user = customerManagementService.readById(principal.getName());
+            model.addAttribute("user", user);
+            model.addAttribute("configList", user.getConfigList());
+            return "user/myConfigurations";
+        }
     }
 
     @RequestMapping(value = "/user/deleteConfiguration", method = RequestMethod.GET)

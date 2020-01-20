@@ -1,55 +1,68 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<head th:replace="fragments/head :: bikerator_head" />
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/head :: bikerator_head"/>
 <head>
     <meta charset="UTF-8">
     <title>Konfiguration</title>
 </head>
 <body>
-    <div th:replace="fragments/navbar :: bikerator_navbar"></div>
-    <div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px;">
-        <div th:if="${max}" class="container">
-            <div class="alert alert-danger" role="alert" style="width: 40%;">
-                Maximale Anzahl an Konfigurationen erreicht. Bitte Löschen Sie eine Konfiguration um fortzufahren.
-            </div>
-            <a class="btn btn btn-outline-secondary btn-large" th:href="@{/user/myConfigurations}">Meine Konfigurationen</a>
+<div th:replace="fragments/navbar :: bikerator_navbar"></div>
+<div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px; margin-bottom: 150px;">
+    <div class="container" th:if="${max}">
+        <div class="alert alert-danger" role="alert" style="margin-top: 40px;">
+            Maximale Anzahl an Konfigurationen erreicht. Bitte Löschen Sie eine Konfiguration um fortzufahren.
         </div>
-        <div class="container">
-            <div th:unless="${max}">
-                <h3>Erster Schritt: Wähle deinen Fahrradrahmen</h3>
-                <form id="configurationForm" th:action="@{/createConfiguration/next}" th:method="post" style="padding: 20px;">
-                    <input type="hidden" th:name="currentCategory" th:value="${currentCategory}"/>
-                    <div th:each="elem: ${itemMap}">
-                        <h4 th:text="${elem.key}"></h4>
-                        <div th:each="item: ${elem.value}" class="col-12 row" style="margin: 30px 0px; border: 1px solid rgb(189, 189, 189); ">
-                            <div class="col-lg-4 col-md-12">
-                                <img th:src="@{/images/bike.jpg}" style="width: 80%;"/>
-                            </div>
-                            <div class="col-lg-1"></div>
-                            <div class="col-lg-4 col-md-6" style="padding: 30px;">
-                                    <h4 th:text="${item.name}"></h4>
-                                    <p>Artikelnummer: <span th:text="${item.getId()}"></span></p>
-                                    <p th:text="${item.description}"></p>
-                                    <span>Lagerbestand: <span th:text="${item.getStock()}"></span></span><br/>
-                                    <span>Gewicht: <span th:text="${item.getWeight()}"></span> Kg</span><br/>
-                                    <span>Kategorie: <span th:text="${item.getCategory().getName()}"></span></span>
-                            </div>
-                            <div class="col-lg-3 col-md-6" style="padding: 30px;">
-                                <label class="checkContainer">Artikel wählen
-                                    <input type="radio" th:name="itemId" th:value="${item.getId()}" required/>
-                                    <span class="checkmark"></span>
-                                </label>
-                                <div class="container" style="position: absolute; bottom: 10%;">
-                                    <h3 th:text="${item.price} + ' €'"></h3>
-                                </div>
+        <a class="btn btn btn-outline-secondary btn-large" style="margin-top: 40px; padding: 8px 30px;"
+           th:href="@{/user/myConfigurations}">Zu meine Konfigurationen</a>
+    </div>
+    <div class="container">
+        <div th:unless="${max}">
+            <h1>Erstelle deine individuellen Drahtesel!</h1>
+            <p style="font-size: 20px;">Im Laufe der nächsten Schritte kannst du dir individuell ein Fahrrad
+                zusammenstellen.
+                Jeder Artikel, der dir angeboten wird, ist garantiert kompatibel mit den zuvor gewählten Komponenten.
+                Um Konfigurationen in deinem Profil zu speichern oder käuflich zu erwerben, ist es notwendig, sich bei
+                Bikerator zu registrieren.
+            </p>
+            <h3 style="margin-top: 40px;">Erster Schritt: Wähle deinen Fahrradrahmen</h3>
+            <form id="configurationForm" style="padding: 20px;" th:action="@{/createConfiguration/next}"
+                  th:method="post">
+                <input th:name="currentCategory" th:value="${currentCategory}" type="hidden"/>
+                <div th:each="elem: ${itemMap}">
+                    <h4 th:text="${elem.key}"></h4>
+                    <div class="col-12 row" style="margin: 30px 0px; border: 1px solid rgb(189, 189, 189); "
+                         th:each="item: ${elem.value}">
+                        <div class="col-lg-4 col-md-12">
+                            <img style="width: 80%;" th:src="@{/images/bike.jpg}"/>
+                        </div>
+                        <div class="col-lg-1"></div>
+                        <div class="col-lg-4 col-md-6" style="padding: 30px;">
+                            <h4 th:text="${item.name}"></h4>
+                            <p>Artikelnummer: <span th:text="${item.getId()}"></span></p>
+                            <p th:text="${item.description}"></p>
+                            <span>Lagerbestand: <span th:text="${item.getStock()}"></span></span><br/>
+                            <span>Gewicht: <span th:text="${item.getWeight()}"></span> Kg</span><br/>
+                            <span>Kategorie: <span th:text="${item.getCategory().getName()}"></span></span>
+                        </div>
+                        <div class="col-lg-3 col-md-6" style="padding: 30px;">
+                            <label class="checkContainer">Artikel wählen
+                                <input required th:name="itemId" th:value="${item.getId()}" type="radio"/>
+                                <span class="checkmark"></span>
+                            </label>
+                            <div class="container" style="position: absolute; bottom: 10%;">
+                                <h3 th:text="${item.price} + ' €'"></h3>
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn btn-outline-secondary btn-large" style="margin: 10px 30px; padding: 8px 30px;">Weiter</button>
-                </form>
-            </div>
+                </div>
+                <button class="btn btn btn-outline-secondary btn-large" style="margin-top: 10px; padding: 8px 30px;"
+                        type="submit">Weiter
+                </button>
+            </form>
         </div>
     </div>
+</div>
+<div th:replace="fragments/footer :: bikerator_footer"></div>
 </body>
 </html>
 
@@ -124,8 +137,8 @@
 </style>
 
 <script type="application/javascript">
-    $('#configurationForm button').click(function() {
-        if(!$('input[type=radio]').is(':checked')) {
+    $('#configurationForm button').click(function () {
+        if (!$('input[type=radio]').is(':checked')) {
             alert('Wähle bitte einen Artikel aus um fortzufahren.');
         }
     });

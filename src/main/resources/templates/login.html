@@ -1,32 +1,35 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head th:replace="fragments/head :: bikerator_head"/>
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
 </head>
-    <body>
-        <div th:replace="fragments/navbar :: bikerator_navbar"></div>
-        <div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px;">
-            <div class="container">
-                <h3>Anmeldung</h3>
-                <div th:if="${error}" class="alert alert-danger" role="alert" style="width: 40%;">
-                    Benutzername oder Passwort sind nicht korrekt.
-                </div>
-                <form th:action="@{/login}" th:method="post" style="padding: 20px;">
-                    <div class="form-group">
-                        <label>Benutzername</label>
-                        <input type="text" class="form-control" name="username" style="width: 30%;" required/>
-                    </div>
-                    <div class="form-group">
-                        <label>Passwort</label>
-                        <input type="password" class="form-control" name="password" style="width: 30%;" required/>
-                    </div>
-                    <button type="submit" class="btn btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px;">Anmelden</button>
-                </form>
-            </div>
+<body>
+<div th:replace="fragments/navbar :: bikerator_navbar"></div>
+<div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px; margin-bottom: 150px;">
+    <div class="container">
+        <h1>Anmeldung</h1>
+        <div class="alert alert-danger" role="alert" style="width: 50%; margin-top: 40üx;" th:if="${error}">
+            Benutzername oder Passwort sind nicht korrekt.
         </div>
-    </body>
+        <form style="margin-top: 40px;" th:action="@{/login}" th:method="post">
+            <div class="form-group">
+                <label>Benutzername</label>
+                <input class="form-control" required style="width: 50%;" th:name="username" type="text"/>
+            </div>
+            <div class="form-group">
+                <label>Passwort</label>
+                <input class="form-control" required style="width: 50%;" th:name="password" type="password"/>
+            </div>
+            <button class="btn btn btn-outline-secondary btn-large" style="margin-top: 20px; padding: 8px 30px;"
+                    type="submit">Anmelden
+            </button>
+        </form>
+    </div>
+</div>
+<div th:replace="fragments/footer :: bikerator_footer"></div>
+</body>
 </html>
 
 <style type="text/css">
