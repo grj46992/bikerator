@@ -9,7 +9,7 @@
 <div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px; margin-bottom: 150px;">
     <div class="container">
         <div class="alert alert-danger" role="alert" th:if="${paymentError}">
-            Bei Ihrer Zahlung ist leider ein Fehler aufgetreten.
+            Bei Ihrer Zahlung ist leider ein Fehler aufgetreten. Möglicherweise sind die Zugangsdaten nicht korrekt, oder das Guthaben reicht nicht aus.
         </div>
         <h1>Zahlungsart wählen</h1>
         <form id="paymentForm" th:action="@{/checkout/complete}" th:method="post">

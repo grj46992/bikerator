@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name="`Order`")
-public class Order extends LongIdEntity implements Serializable {
+@Table(name="`orders`")
+public class Order extends LongIdEntity {
     private Double amountOrder = 0.0;
     private Date orderDate;
     private Boolean completed = false;
@@ -83,5 +83,9 @@ public class Order extends LongIdEntity implements Serializable {
 
     public void removeConfiguration(Configuration configuration) {
         this.configList.remove(configuration);
+    }
+
+    public void setConfigList(List<Configuration> configList) {
+        this.configList = configList;
     }
 }

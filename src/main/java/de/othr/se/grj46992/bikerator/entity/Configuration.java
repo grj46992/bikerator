@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Embeddable
-public class Configuration extends LongIdEntity implements Serializable {
+public class Configuration extends LongIdEntity {
     private String name;
     private String description;
     private Date createDate;
@@ -20,8 +20,6 @@ public class Configuration extends LongIdEntity implements Serializable {
             joinColumns = {@JoinColumn(name = "configurationId")},
             inverseJoinColumns = {@JoinColumn(name = "itemId")})
     private List<Item> itemList = new ArrayList<Item>();
-    //@ManyToMany(mappedBy = "configList", cascade = CascadeType.REMOVE)
-    //private List<Order> orderList;
 
     public String getName() {
         return name;
@@ -61,13 +59,5 @@ public class Configuration extends LongIdEntity implements Serializable {
 
     public void addItem(Item item) {
         this.itemList.add(item);
-    }
-
-    public void removeItem(Item item) {
-        this.itemList.remove(item);
-    }
-
-    public void setItemList(List<Item> itemList) {
-        this.itemList = itemList;
     }
 }

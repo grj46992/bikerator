@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 @Entity
 @Embeddable
-public class DepotItem extends LongIdEntity implements Serializable {
+public class DepotItem extends LongIdEntity {
     @ManyToOne
     private Item item;
 
@@ -19,5 +19,9 @@ public class DepotItem extends LongIdEntity implements Serializable {
 
     public Item getItem() {
         return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Embeddable
-public class ItemPool extends LongIdEntity implements Serializable {
+public class ItemPool extends LongIdEntity {
     @ManyToMany(mappedBy = "itemPoolList")
     private List<Item> itemList;
 
@@ -27,4 +27,5 @@ public class ItemPool extends LongIdEntity implements Serializable {
     public void addItem(Item item) {
         this.itemList.add(item);
     }
+
 }

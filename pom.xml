@@ -66,12 +66,33 @@
 			<artifactId>moneyboi-entities</artifactId>
 			<version>0.1</version>
 		</dependency>
+		<dependency>
+			<groupId>de.alexhamedinger.entities</groupId>
+			<artifactId>friendzone-entities</artifactId>
+			<version>0.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.48</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>de.othr.se.grj46992.bikerator.BikeratorApplication</mainClass>
+					<executable>true</executable>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

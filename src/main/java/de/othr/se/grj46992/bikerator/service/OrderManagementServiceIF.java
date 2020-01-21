@@ -19,5 +19,5 @@ public interface OrderManagementServiceIF {
 
     Order readOrderByCustomer(Customer customer);
 
-    boolean createTransaction(String username, String password, Order order);
+    void createTransaction(String username, String password, Order order);
 }

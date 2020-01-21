@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
+@Transactional
 public class ArticleManagementService implements ArticleManagementServiceIF {
 
     @Autowired
@@ -29,10 +30,38 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     @Autowired
     private CustomerRepository customerRepository;
 
-    @Autowired
-    private OrderRepository orderRepository;
-
+    // Sequence of categories in configuration
     private String[] categoryOrder = {"Fahrradrahmen", "Fahrradfelgen", "Fahrradreifen", "Fahrradschaltwerke"};
+
+    @Override
+    public void createItem(Item item) {
+        itemRepository.save(item);
+    }
+
+    @Override
+    public void createItemPool(ItemPool itemPool) {
+        itemPoolRepository.save(itemPool);
+    }
+
+    @Override
+    public void updateItemPool(ItemPool itemPool) {
+        itemPoolRepository.save(itemPool);
+    }
+
+    @Override
+    public void createDepotItem(DepotItem depotItem) {
+        depotItemRepository.save(depotItem);
+    }
+
+    @Override
+    public void createCategory(Category category) {
+        categoryRepository.save(category);
+    }
+
+    @Override
+    public Iterable<Category> readFatherCategories() {
+        return categoryRepository.findByFatherCategory(null);
+    }
 
     @Override
     public String readFirstCategory() {
@@ -51,6 +80,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     @Override
     public int readLastIndexByConfigurationItemList(Configuration currentConfiguration) {
         List<Item> itemList = currentConfiguration.getItemList();
+        // Check if configuration contains item of last category
         for (int i = categoryOrder.length - 1; i > 0; i--) {
             String category = categoryOrder[i];
             for (Item item : itemList) {
@@ -101,34 +131,10 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
-    public void createCategory(Category category) {
-        categoryRepository.save(category);
-    }
-
-    @Override
-    public Iterable<Category> readFatherCategories() {
-        return categoryRepository.findByFatherCategory(null);
-    }
-
-    @Override
-    public void createItem(Item item) {
-        itemRepository.save(item);
-    }
-
-    @Override
-    public void createItemPool(ItemPool itemPool) {
-        itemPoolRepository.save(itemPool);
-    }
-
-    @Override
-    public void createDepotItem(DepotItem depotItem) {
-        depotItemRepository.save(depotItem);
-    }
-
-    @Override
     public Iterable<Item> readItemsByItemPoolListAndCategory(List<ItemPool> itemPoolList, String category) {
         List<Item> completeItemList = new ArrayList<Item>();
         Category currentCategory = categoryRepository.findByName(category);
+        // Add all items of given category that are available and part of given item pools
         for (ItemPool itemPool : itemPoolList) {
             Optional<ItemPool> optional = itemPoolRepository.findById(itemPool.getId());
             if (optional.isPresent()) {
@@ -148,36 +154,34 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     @Override
     public Configuration updateConfigurationItemListAddItem(Configuration currentConfig, Long itemId) {
         Optional<Item> optional = itemRepository.findById(itemId);
-        // Check if item exists
         if (optional.isPresent()) {
             Item newItem = optional.get();
-            // Check if item of same category already exists in configuration
             Category cat = newItem.getCategory();
-            // If fatherCategory exists, take fatherCategory
+            // If father category exists, take father category
             if (cat.getFatherCategory() != null) {
                 cat = cat.getFatherCategory();
             }
             List<Item> itemList = currentConfig.getItemList();
             if (itemList.isEmpty()) {
-                // Add new Item if list ist empty
+                // Add new item if list is empty
                 currentConfig.addItem(newItem);
             } else {
                 ListIterator<Item> iterator = itemList.listIterator();
                 while (iterator.hasNext()) {
                     Category tempCat = iterator.next().getCategory();
-                    // If fatherCategory exists, take fatherCategory
+                    // If father category exists, take father category
                     if (tempCat.getFatherCategory() != null) {
                         tempCat = tempCat.getFatherCategory();
                     }
-                    // Delete Item
+                    // Check if item of same category already exists in configuration and remove it
                     if (cat.equals(tempCat)) {
                         iterator.remove();
                     }
                 }
-                // Add new Item
+                // Add new item to configuration
                 currentConfig.addItem(newItem);
             }
-            // Update AmountTotal
+            // Update total amount of configuration an round it
             Double newAmountTotal = 0.0;
             for (Item item : itemList) {
                 newAmountTotal += item.getPrice();
@@ -192,7 +196,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     @Override
     public Configuration updateConfigurationItemListRemoveItem(Configuration currentConfig, String currentCategory) {
         Category cat = categoryRepository.findByName(currentCategory);
-        // If fatherCategory exists, take fatherCategory
+        // If father category exists, take father category
         if (cat.getFatherCategory() != null) {
             cat = cat.getFatherCategory();
         }
@@ -200,21 +204,20 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
         ListIterator<Item> iterator = itemList.listIterator();
         while (iterator.hasNext()) {
             Category tempCat = iterator.next().getCategory();
-            // If fatherCategory exists, take fatherCategory
             if (tempCat.getFatherCategory() != null) {
                 tempCat = tempCat.getFatherCategory();
             }
-            // Delete Item
+            // Delete recently added item
             if (cat.equals(tempCat)) {
                 iterator.remove();
             }
         }
-        // Update AmountTotal
+        // Update total amount of configuraion and round it
         Double newAmountTotal = 0.0;
         for (Item item : itemList) {
             newAmountTotal += item.getPrice();
         }
-        currentConfig.setAmountTotal(newAmountTotal);
+        currentConfig.setAmountTotal(Math.round(newAmountTotal * 100.0) / 100.0);
         return currentConfig;
     }
 
@@ -226,8 +229,7 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
 
     @Override
     public List<ItemPool> readItemPoolListByConfiguration(Configuration configuration, String currentCategory) {
-        // TODO besser lösen
-        if (currentCategory == "Fahrradreifen") {
+        if (currentCategory.equals("Fahrradreifen")) {
             currentCategory = "Fahrradrahmen";
         }
         if (configuration.getItemList().isEmpty()) {
@@ -265,18 +267,6 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
                 userConfigList.remove(configuration);
                 customerRepository.save(user);
             }
-            /*
-            List<Order> orderList = (List<Order>) orderRepository.findAll();
-            if (!orderList.isEmpty()) {
-                for (Order order: orderList){
-                    if (order.getConfigList().contains(configuration)) {
-                        order.getConfigList().remove(configuration);
-                        orderRepository.save(order);
-                    }
-                }
-            }
-            configurationRepository.deleteById(configuration.getId());
-            */
         }
     }
 
@@ -292,7 +282,6 @@ public class ArticleManagementService implements ArticleManagementServiceIF {
     }
 
     @Override
-    @Transactional
     public boolean updateDepotItems(Order order) {
         for (Configuration config : order.getConfigList()) {
             for (Item item : config.getItemList()) {

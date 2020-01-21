@@ -1,5 +1,6 @@
 package de.othr.se.grj46992.bikerator.service;
 
+import de.alexanderhamedinger.friendzone.entities.Post;
 import de.othr.se.grj46992.bikerator.entity.Address;
 import de.othr.se.grj46992.bikerator.entity.Configuration;
 import de.othr.se.grj46992.bikerator.entity.Customer;
@@ -13,13 +14,18 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @Qualifier("labresources")
+@Transactional
 public class CustomerManagementService implements CustomerManagementServiceIF, UserDetailsService {
 
     @Autowired
@@ -31,11 +37,28 @@ public class CustomerManagementService implements CustomerManagementServiceIF, U
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private RestTemplate restServiceClient;
+
     @Override
-    public void createCustomer(Customer customer) {
-        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
-        addressRepository.save(customer.getAddress());
-        customerRepository.save(customer);
+    public int createCustomer(Customer newCustomer) {
+        Optional<Customer> optionalCustomer = customerRepository.findById(newCustomer.getUsername());
+        if (optionalCustomer.isPresent()) {
+            // Username already exists
+            return 0;
+        } else {
+            Customer existingCustomer = customerRepository.findByEmail(newCustomer.getEmail());
+            if (existingCustomer != null) {
+                // Email address already exists
+                return 1;
+            } else {
+                // Create new customer
+                newCustomer.setPassword(passwordEncoder.encode(newCustomer.getPassword()));
+                addressRepository.save(newCustomer.getAddress());
+                customerRepository.save(newCustomer);
+                return 2;
+            }
+        }
     }
 
     @Override
@@ -59,13 +82,13 @@ public class CustomerManagementService implements CustomerManagementServiceIF, U
     }
 
     @Override
-    public List<String> readCustomerEmailList() {
-        List<String> customerEmailList = new ArrayList<String>();
+    public List<String> readAllCustomerEmails() {
+        List<String> emailList = new ArrayList<String>();
         Iterable<Customer> allCustomers = customerRepository.findAll();
         for (Customer customer : allCustomers) {
-            customerEmailList.add(customer.getEmail());
+            emailList.add(customer.getEmail());
         }
-        return customerEmailList;
+        return emailList;
     }
 
     @Override
@@ -90,8 +113,14 @@ public class CustomerManagementService implements CustomerManagementServiceIF, U
     }
 
     @Override
-    public void createPost(String title, String text, String email, String password, String picture) {
-        // TODO create post object and send to friendzone
+    public void createPost(String title, String email) throws RestClientException {
+        // Create new post and set customer email and title
+        Post post = new Post();
+        post.setTitle("Ich habe mit einen neuen Drahtesel auf Bikerator erstellt! Name: " + title + "§" + email);
+        post.setUser(null);
+        post.setCreationDate(new GregorianCalendar());
+        // Send post to friendzone
+        restServiceClient.postForObject("http://im-codd:8861/restapi/posts", post, Post.class);
     }
 
     @Override
@@ -106,6 +135,7 @@ public class CustomerManagementService implements CustomerManagementServiceIF, U
         customerRepository.save(customer);
     }
 
+    // Necessary for spring security
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Customer> optional = customerRepository.findById(username);

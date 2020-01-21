@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Entity
 @Embeddable
-public class Address extends LongIdEntity implements Serializable {
+public class Address extends LongIdEntity {
     @NotNull
     private String street;
     @NotNull

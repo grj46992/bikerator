@@ -62,10 +62,10 @@ public class HomeController {
             @ModelAttribute("username") String username,
             @ModelAttribute("password") String password,
             @ModelAttribute("passwordCheck") String passwordCheck,
-            @ModelAttribute("email") String email
+            @ModelAttribute("email") String email,
+            Model model
     ) {
 
-        //TODO nicht selber kunde nochmal registrieren
         Customer customer = new Customer();
         customer.setFirstname(firstname);
         customer.setLastname(lastname);
@@ -79,7 +79,23 @@ public class HomeController {
         address.setTown(town);
         address.setCountry(country);
         customer.setAddress(address);
-        customerManagementService.createCustomer(customer);
-        return "login";
+        // Create new customer if username and email is not already used
+        int status = customerManagementService.createCustomer(customer);
+        // Load template according to status of registration
+        switch (status) {
+            case 0:
+                model.addAttribute("nameError", true);
+                return "signup";
+
+            case 1:
+                model.addAttribute("emailError", true);
+                return "signup";
+
+            case 2:
+                return "login";
+
+            default:
+                return "login";
+        }
     }
 }

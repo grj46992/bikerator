@@ -14,7 +14,7 @@ import java.util.List;
 
 @Entity
 @Embeddable
-public class Customer extends StringIdEntity implements Serializable, UserDetails {
+public class Customer extends StringIdEntity implements UserDetails {
     @NotNull
     private String firstname;
     @NotNull
@@ -23,7 +23,6 @@ public class Customer extends StringIdEntity implements Serializable, UserDetail
     private String email;
     @NotNull
     private String password;
-    @ElementCollection
     @NotNull
     @OneToOne
     private Address address;
@@ -113,19 +112,27 @@ public class Customer extends StringIdEntity implements Serializable, UserDetail
         return configList;
     }
 
-    public Order getCurrentOrder() {
-        return currentOrder;
-    }
-
     public void setCurrentOrder(Order currentOrder) {
         this.currentOrder = currentOrder;
+    }
+
+    public void addOrderToCompletedOrderList(Order order) {
+        this.completedOrderList.add(order);
+    }
+
+    public Order getCurrentOrder() {
+        return currentOrder;
     }
 
     public List<Order> getCompletedOrderList() {
         return completedOrderList;
     }
 
-    public void addOrderToCompletedOrderList(Order order) {
-        this.completedOrderList.add(order);
+    public void setCompletedOrderList(List<Order> completedOrderList) {
+        this.completedOrderList = completedOrderList;
+    }
+
+    public void setConfigList(List<Configuration> configList) {
+        this.configList = configList;
     }
 }

@@ -39,8 +39,10 @@ public class OrderController {
         Order currentOrder = orderManagementService.readOrderByCustomer(customer);
 
         if (currentOrder != null) {
+            // Add configuration to current order if order already exists
             currentOrder = orderManagementService.updateOrderAddConfiguration(currentOrder, currentConfig);
         } else {
+            // Create new order and add configuration
             currentOrder = orderManagementService.createOrder(customer);
             currentOrder = orderManagementService.updateOrderAddConfiguration(currentOrder, currentConfig);
         }
@@ -57,6 +59,7 @@ public class OrderController {
         Configuration currentConfig = articleManagementService.readConfigurationById(configId);
         Customer customer = customerManagementService.readById(principal.getName());
         Order currentOrder = orderManagementService.readOrderByCustomer(customer);
+        // Remove chosen configuration from order
         currentOrder = orderManagementService.updateOrderRemoveConfiguration(currentOrder, currentConfig);
         model.addAttribute("order", currentOrder);
         return "user/shoppingcart";
@@ -88,6 +91,7 @@ public class OrderController {
         Order currentOrder = orderManagementService.readOrderByCustomer(customer);
 
         if (differentShippingAddress) {
+            // Create shipping address in order if it is not equal to billing address
             Address shippingAddress = new Address();
             shippingAddress.setStreet(street);
             shippingAddress.setNumber(number);
@@ -97,6 +101,7 @@ public class OrderController {
             shippingAddress = customerManagementService.createAddress(shippingAddress);
             orderManagementService.updateOrderAddShippingAddress(currentOrder, shippingAddress);
         } else {
+            // Set customer address as shipping address
             orderManagementService.updateOrderAddShippingAddress(currentOrder, customer.getAddress());
         }
         return "checkout/payment";
@@ -112,29 +117,24 @@ public class OrderController {
     ) {
         Customer customer = customerManagementService.readById(principal.getName());
         Order currentOrder = orderManagementService.readOrderByCustomer(customer);
-
+        // Check if all items of order are in stock
         boolean allItemsAvailable = articleManagementService.updateDepotItems(currentOrder);
-
         if (allItemsAvailable) {
             if (payment.equals("moneyboi")) {
                 try {
-                    boolean orderIsPayed = orderManagementService.createTransaction(email, password, currentOrder);
-                    if (orderIsPayed) {
-                        Order updatedOrder = orderManagementService.updateOrderComplete(currentOrder);
-                        customerManagementService.updateCompletedOrderList(customer, updatedOrder);
-                        customerManagementService.deleteCurrentOrder(customer);
-                        model.addAttribute("order", updatedOrder);
-                        return "checkout/summary";
-                    } else {
-                        model.addAttribute("paymentError", true);
-                        return "checkout/payment";
-                    }
+                    // Payment service moneyboi chosen -> create transaction and send it to moneyboi
+                    orderManagementService.createTransaction(email, password, currentOrder);
+                    Order updatedOrder = orderManagementService.updateOrderComplete(currentOrder);
+                    customerManagementService.updateCompletedOrderList(customer, updatedOrder);
+                    customerManagementService.deleteCurrentOrder(customer);
+                    model.addAttribute("order", updatedOrder);
+                    return "checkout/summary";
                 } catch (RestClientException e) {
-                    System.out.println(e.getMessage());
                     model.addAttribute("paymentError", true);
                     return "checkout/payment";
                 }
             } else if(payment.equals("bill")) {
+                // Payment on account -> complete order
                 Order updatedOrder = orderManagementService.updateOrderComplete(currentOrder);
                 customerManagementService.updateCompletedOrderList(customer, updatedOrder);
                 customerManagementService.deleteCurrentOrder(customer);

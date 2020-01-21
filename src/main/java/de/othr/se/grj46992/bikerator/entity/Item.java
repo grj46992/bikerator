@@ -8,11 +8,16 @@ import java.util.List;
 
 @Entity
 @Embeddable
-public class Item extends LongIdEntity implements Serializable {
+public class Item extends LongIdEntity {
+    @NotNull
     private String name;
+    @NotNull
     private String description;
+    @NotNull
     private Double price;
+    @NotNull
     private Double weight;
+    @NotNull
     private String imagePath;
     @ManyToOne
     private Category category;
@@ -102,4 +107,6 @@ public class Item extends LongIdEntity implements Serializable {
     public int getStock() {
         return this.depotItemList.size();
     }
+
+
 }

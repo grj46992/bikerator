@@ -31,4 +31,9 @@ public class LongIdEntity {
         }
         return true;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

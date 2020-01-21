@@ -10,6 +10,12 @@
 <div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px; margin-bottom: 150px;">
     <div class="container">
         <h1>Registrierung</h1>
+        <div th:if="${nameError}" class="alert alert-danger" role="alert" style="margin-top: 40px;" >
+            Der Benutzername ist bereits vergeben.
+        </div>
+        <div th:if="${emailError}" class="alert alert-danger" role="alert" style="margin-top: 40px;" >
+             Mit dieser E-Mail Adresse wurde bereits ein Konto erstellt.
+        </div>
         <form id="registerForm" style="margin-top: 40px;" th:action="@{/register}" th:method="post">
             <div class="form-row">
                 <div class="form-group col-6">

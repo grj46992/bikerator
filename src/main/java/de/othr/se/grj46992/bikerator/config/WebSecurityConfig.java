@@ -16,7 +16,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] ALLOW_ACCESS_WITHOUT_AUTHENTICATION = {
-            "/css/**", "/images/**", "/fonts/**", "/", "/login", "/signup", "/register", "/configuration", "/createConfiguration/start", "/createConfiguration/next", "/createConfiguration/back", "/createConfiguration/complete",  "/overview"};
+            "/images/**", "/", "/login", "/signup", "/register", "/configuration", "/createConfiguration/start", "/createConfiguration/next", "/createConfiguration/back", "/createConfiguration/complete", "/overview", "/restapi/customers/emails"};
     @Autowired
     @Qualifier("labresources")
     private UserDetailsService userSecurityService;
@@ -33,7 +33,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers(ALLOW_ACCESS_WITHOUT_AUTHENTICATION)
-                .permitAll().anyRequest().authenticated();
+                .permitAll().anyRequest().authenticated()
+                .and().csrf().disable();
         http
                 .formLogin()
                 .loginPage("/login").permitAll()

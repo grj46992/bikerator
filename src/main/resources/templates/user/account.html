@@ -10,8 +10,11 @@
 <div th:replace="fragments/navbar :: bikerator_navbar"></div>
 <div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px; margin-bottom: 150px;">
     <div class="container">
-        <div class="alert alert-success" role="alert" th:if="${saved}">
+        <div  th:if="${saved}" class="alert alert-success" role="alert">
             Die Änderungen wurden erfolgreich gespeichert.
+        </div>
+        <div th:if="${postIsSet}" class="alert alert-success" role="alert" style="margin-top: 40px;">
+            Deine Konfiguration wurde auf Friendzone geteilt.
         </div>
         <h1>Hallo <span sec:authentication="name"/>! Wilkommen im Bikerator.</h1>
         <div class="container row" style="margin-top: 50px;">

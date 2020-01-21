@@ -12,9 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 
 @Service
+@Transactional
 public class OrderManagementService implements OrderManagementServiceIF {
 
     @Autowired
@@ -30,7 +32,6 @@ public class OrderManagementService implements OrderManagementServiceIF {
         newOrder.setCustomer(customer);
         newOrder.setBillingAddress(customer.getAddress());
         newOrder.setShippingAddress(customer.getAddress());
-        //TODO if shipping address -> set , else set billing adress as shipping adress
         Order currentOrder = orderRepository.save(newOrder);
         customer.setCurrentOrder(currentOrder);
         customerRepository.save(customer);
@@ -40,7 +41,7 @@ public class OrderManagementService implements OrderManagementServiceIF {
     @Override
     public Order updateOrderAddConfiguration(Order order, Configuration configuration) {
         order.addConfiguration(configuration);
-        Double newAmountTotal = order.getAmountOrder() + configuration.getAmountTotal();
+        double newAmountTotal = order.getAmountOrder() + configuration.getAmountTotal();
         order.setAmountOrder(Math.round(newAmountTotal * 100.0) / 100.0);
         return orderRepository.save(order);
     }
@@ -49,13 +50,14 @@ public class OrderManagementService implements OrderManagementServiceIF {
     public Order updateOrderRemoveConfiguration(Order order, Configuration configuration) {
         order.removeConfiguration(configuration);
         if (order.getConfigList().size() < 1) {
+            // Order contains no configurations -> delete order
             Customer customer = order.getCustomer();
             customer.setCurrentOrder(null);
             customerRepository.save(customer);
             orderRepository.delete(order);
             return null;
         } else {
-            Double newAmountTotal = order.getAmountOrder() - configuration.getAmountTotal();
+            double newAmountTotal = order.getAmountOrder() - configuration.getAmountTotal();
             order.setAmountOrder(Math.round(newAmountTotal * 100.0) / 100.0);
             return orderRepository.save(order);
         }
@@ -76,22 +78,22 @@ public class OrderManagementService implements OrderManagementServiceIF {
 
     @Override
     public Order readOrderByCustomer(Customer customer) {
-        return orderRepository.findByCustomerAndCompleted(customer, false);
+        return orderRepository.findByCustomerAndCompletedFalse(customer);
     }
 
     @Override
-    public boolean createTransaction(String email, String password, Order order) throws RestClientException {
-        //TODO create payment object and send it to payment service
+    public void createTransaction(String email, String password, Order order) throws RestClientException {
+        // Create moneyboi-transaction, set sender, receiver and amount
         Transaction transaction = new Transaction();
         de.othr.daj.megabikeshop.moneyboi.entity.Customer sender = new de.othr.daj.megabikeshop.moneyboi.entity.Customer();
         de.othr.daj.megabikeshop.moneyboi.entity.Customer receiver = new de.othr.daj.megabikeshop.moneyboi.entity.Customer();
-        sender.setEmailAddress("rich@dummy"); // String email
-        sender.setPassword("asd"); // String password
-        receiver.setEmailAddress("poor@dummy"); // EMail des Shops
+        sender.setEmailAddress(email);
+        sender.setPassword(password);
+        receiver.setEmailAddress("bikerator@shop.de");
         transaction.setSender(sender);
         transaction.setReceiver(receiver);
         transaction.setAmount(order.getAmountOrder());
-        //restServiceClient.postForObject("http://im-codd:8873/restapi/transactions", transaction, CLASS? );
-        return true;
+        // Send transaction to moneyboi
+        restServiceClient.postForObject("http://im-codd:8873/restapi/transactions", transaction, Transaction.class);
     }
 }

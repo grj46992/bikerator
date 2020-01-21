@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Embeddable
-public class Category extends LongIdEntity implements Serializable {
+public class Category extends LongIdEntity {
     private String name;
     private String description;
     private String  imagePath;
@@ -76,4 +76,5 @@ public class Category extends LongIdEntity implements Serializable {
     public void addChildCategory(Category childCategory) {
         this.childCategories.add(childCategory);
     }
+
 }

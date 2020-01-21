@@ -10,7 +10,7 @@
 <div class="content" style="color: rgba(0, 0, 0, 0.6); margin-top: 80px; margin-bottom: 150px;">
     <div class="container">
         <h1>Anmeldung</h1>
-        <div class="alert alert-danger" role="alert" style="width: 50%; margin-top: 40üx;" th:if="${error}">
+        <div class="alert alert-danger" role="alert" style="width: 50%; margin-top: 40px;" th:if="${error}">
             Benutzername oder Passwort sind nicht korrekt.
         </div>
         <form style="margin-top: 40px;" th:action="@{/login}" th:method="post">

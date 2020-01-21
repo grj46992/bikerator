@@ -32,10 +32,9 @@ public class CustomerController {
     ) {
         Configuration currentConfig = (Configuration) session.getAttribute("configuration");
         if (currentConfig != null && !currentConfig.getItemList().isEmpty()) {
+            // Add open configuration to model
             model.addAttribute("openConfig", currentConfig);
         }
-        Iterable<Customer> list = customerManagementService.readAllCustomers();
-        model.addAttribute("customers", list);
         return "user/account";
     }
 
@@ -64,7 +63,6 @@ public class CustomerController {
     ) {
         Customer customer = customerManagementService.readById(principal.getName());
         Address customerAddress = customer.getAddress();
-
         customer.setFirstname(firstname);
         customer.setLastname(lastname);
         customer.setEmail(email);
@@ -103,6 +101,7 @@ public class CustomerController {
             HttpSession session,
             Principal principal
     ) {
+        // Delete customer, invalidate session and logout customer
         Customer customer = customerManagementService.readById(principal.getName());
         customerManagementService.deleteCustomer(customer);
         session.invalidate();

@@ -19,6 +19,7 @@ public class StringIdEntity {
         this.id = id;
     }
 
+    @Override
     public boolean equals(Object o) {
         if(o == null) {
             return false;
@@ -31,5 +32,10 @@ public class StringIdEntity {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

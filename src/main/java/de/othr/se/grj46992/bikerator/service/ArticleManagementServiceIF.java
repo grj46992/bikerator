@@ -12,6 +12,8 @@ public interface ArticleManagementServiceIF {
 
     void createItemPool(ItemPool itemPool);
 
+    void updateItemPool(ItemPool itemPool);
+
     void createDepotItem(DepotItem depotItem);
 
     Iterable<Item> readItemsByCategory(String category);

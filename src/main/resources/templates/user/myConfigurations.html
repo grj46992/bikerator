@@ -17,6 +17,9 @@
             Du hast keine Konfiguration gespeichert. Um eine Konfiguration zu erstellen, klicke in der Navigationsleiste
             auf 'Konfiguration starten'.
         </div>
+        <div th:if="${postError}" class="alert alert-danger" role="alert" style="margin-top: 40px;">
+            Beim posten der Konfiguration auf Friendzone ist ein Fehler aufgetreten. Möglicherweise ist die E-Mail Addresse nicht korrekt.
+        </div>
         <div class="row" style="margin-top: 40px;">
             <div class="col-md-12 row" style="padding: 30px; margin: 20px; border: 1px solid rgb(189, 189, 189);"
                  th:each="config: ${configList}">
@@ -26,7 +29,7 @@
                     </div>
                     <div class="col-4" style="text-align: right;">
                         <p>Erstellt am:
-                        <td th:text="${#dates.format(config.getCreateDate(), 'dd-MMM-yyyy')}"></td>
+                            <td th:text="${#dates.format(config.getCreateDate(), 'dd-MMM-yyyy H:m')}"></td> Uhr
                         </p>
                     </div>
                 </div>
@@ -36,8 +39,7 @@
                 <div class="col-6" style="padding:20px;">
                     <div class="row" th:each="item: ${config.getItemList()}">
                         <div class="col-8">
-                            <a style="color: rgba(0,0,0,.5);" th:href="@{'/artikel/' + ${item.getId()}}"
-                               th:text="${item.getName()}"></a>
+                            <p th:text="${item.getName()}"></p>
                         </div>
                         <div class="col-4" style="text-align: right">
                             <p th:text="${item.getPrice()} + ' €'"></p>
